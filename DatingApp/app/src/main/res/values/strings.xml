@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">DatingApp</string>
+    <string name="login">로그인</string>
+    <string name="sign_up">회원가입</string>
+
+    <string name="facebook_app_id">358970732957951</string>
+    <string name="fb_login_protocol_scheme">fb358970732957951</string>
+    <string name="facebook_client_token">e21f900594ded0dccecf4539a004e148</string>
+
+    <string name="name_undecided">undecided</string>
+    <string name="status_not_login">로그인 되어있지 않습니다.</string>
+
+    <string name="login_success">로그인 성공</string>
+    <string name="login_failed">로그인에 실패했습니다, 이메일과 패스워드를 확인해주세요</string>
+    <string name="login_failed_facebook">facebook 로그인에 실패했습니다.</string>
+
+    <string name="signup_success_click_login_button">회원가입에 성공했습니다. 로그인 버튼을 눌러 로그인해주세요</string>
+    <string name="signup_failed">이미 가입된 회원이거나 이메일 형식이 잘못되었습니다.</string>
+
+</resources>

@@ -1,0 +1,201 @@
+{
+  "project_info": {
+    "project_number": "965831066614",
+    "firebase_url": "https://fir-efdef-default-rtdb.firebaseio.com",
+    "project_id": "fir-efdef",
+    "storage_bucket": "fir-efdef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965831066614:android:f2b86ca902135be09abdd7",
+        "android_client_info": {
+          "package_name": "com.hoon.body_calendar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "965831066614-s7n2u6e76e2os0r8hshtbmidp1ck0k5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ExFy_ivruLoieMr6lKVQCL9OGXGYDn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "965831066614-bas36lgr8tn5envvbui6s7q2jv5961ci.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965831066614:android:743701ede03846219abdd7",
+        "android_client_info": {
+          "package_name": "com.hoon.datingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "965831066614-s7n2u6e76e2os0r8hshtbmidp1ck0k5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ExFy_ivruLoieMr6lKVQCL9OGXGYDn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "965831066614-bas36lgr8tn5envvbui6s7q2jv5961ci.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965831066614:android:cd64ea5d38f334ba9abdd7",
+        "android_client_info": {
+          "package_name": "com.hoon.instagramclone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "965831066614-gvmg47a39f6qlf9qs8lpkqpdjg23nk8f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hoon.instagramclone",
+            "certificate_hash": "5d92185eef6cc971c510fec93bcb1fc515d7d2ae"
+          }
+        },
+        {
+          "client_id": "965831066614-s7n2u6e76e2os0r8hshtbmidp1ck0k5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ExFy_ivruLoieMr6lKVQCL9OGXGYDn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "965831066614-bas36lgr8tn5envvbui6s7q2jv5961ci.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965831066614:android:4605a1026d6b6cfb9abdd7",
+        "android_client_info": {
+          "package_name": "com.hoon.quoteapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "965831066614-s7n2u6e76e2os0r8hshtbmidp1ck0k5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ExFy_ivruLoieMr6lKVQCL9OGXGYDn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "965831066614-bas36lgr8tn5envvbui6s7q2jv5961ci.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965831066614:android:fd97aea52cba4ef69abdd7",
+        "android_client_info": {
+          "package_name": "com.test.firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "965831066614-s7n2u6e76e2os0r8hshtbmidp1ck0k5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ExFy_ivruLoieMr6lKVQCL9OGXGYDn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "965831066614-bas36lgr8tn5envvbui6s7q2jv5961ci.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965831066614:android:9aeb572144fd946c9abdd7",
+        "android_client_info": {
+          "package_name": "com.test.googlelogin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "965831066614-lrnpvsff34n6ifdrbei6ga66ad396u31.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.test.googlelogin",
+            "certificate_hash": "5d92185eef6cc971c510fec93bcb1fc515d7d2ae"
+          }
+        },
+        {
+          "client_id": "965831066614-s7n2u6e76e2os0r8hshtbmidp1ck0k5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA0ExFy_ivruLoieMr6lKVQCL9OGXGYDn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "965831066614-bas36lgr8tn5envvbui6s7q2jv5961ci.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
