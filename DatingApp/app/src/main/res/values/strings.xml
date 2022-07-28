@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">DatingApp</string>
     <string name="login">로그인</string>
+    <string name="facebook_login">페이스북 로그인</string>
     <string name="sign_up">회원가입</string>
 
     <string name="facebook_app_id">358970732957951</string>
@@ -16,5 +17,7 @@
 
     <string name="signup_success_click_login_button">회원가입에 성공했습니다. 로그인 버튼을 눌러 로그인해주세요</string>
     <string name="signup_failed">이미 가입된 회원이거나 이메일 형식이 잘못되었습니다.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

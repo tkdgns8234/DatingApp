@@ -1,4 +1,4 @@
-package com.hoon.datingapp
+package com.hoon.datingapp.data.model
 
 data class CardItem(
     val userID: String,

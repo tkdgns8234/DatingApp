@@ -1,10 +1,10 @@
-package com.hoon.datingapp
+package com.hoon.datingapp.ui.view
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
-import com.hoon.datingapp.databinding.ActivityMainBinding
+import com.hoon.datingapp.databinding.ActivitySplashBinding
 
 /*
 배운점
@@ -27,11 +27,11 @@ TODO:
  5. FB DB에 데이터 추가 시, data class 를 이용해 추가하도록 변경하기
  */
 
-class MainActivity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity() {
     private val auth = FirebaseAuth.getInstance()
 
     private val binding by lazy {
-        ActivityMainBinding.inflate(layoutInflater)
+        ActivitySplashBinding.inflate(layoutInflater)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,11 +41,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
+
         // 로그인 되어있지 않으면 login activity로 이동
         if (auth.currentUser == null) {
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(
+                Intent(this, LoginActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
         } else {
-            startActivity(Intent(this, LikeActivity::class.java))
+            startActivity(
+                Intent(this, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
         }
     }
 }

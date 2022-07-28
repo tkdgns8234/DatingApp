@@ -1,14 +1,17 @@
-package com.hoon.datingapp
+package com.hoon.datingapp.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.hoon.datingapp.databinding.ItemMatchedListBinding
+import com.hoon.datingapp.data.model.CardItem
+import com.hoon.datingapp.databinding.ItemCardBinding
 
-class MatchedListAdapter : ListAdapter<CardItem, MatchedListAdapter.ViewHolder>(diffUtil) {
-    inner class ViewHolder(private val binding: ItemMatchedListBinding) : RecyclerView.ViewHolder(binding.root) {
+class CardItemAdapter : ListAdapter<CardItem, CardItemAdapter.CardViewHolder>(diffUtil) {
+    inner class CardViewHolder(val binding: ItemCardBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
         fun bind(cardItem: CardItem) {
             binding.tvName.text = cardItem.name
         }
@@ -17,9 +20,9 @@ class MatchedListAdapter : ListAdapter<CardItem, MatchedListAdapter.ViewHolder>(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): MatchedListAdapter.ViewHolder {
-        return ViewHolder(
-            ItemMatchedListBinding.inflate(
+    ): CardViewHolder {
+        return CardViewHolder(
+            ItemCardBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -27,7 +30,7 @@ class MatchedListAdapter : ListAdapter<CardItem, MatchedListAdapter.ViewHolder>(
         )
     }
 
-    override fun onBindViewHolder(holder: MatchedListAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         holder.bind(currentList[position])
     }
 
@@ -43,5 +46,4 @@ class MatchedListAdapter : ListAdapter<CardItem, MatchedListAdapter.ViewHolder>(
 
         }
     }
-
 }

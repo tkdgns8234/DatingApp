@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@id/likeFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_favorite_24"
+        android:iconTint="#979797"
+        android:title="">
+    </item>
+
+    <item
+        android:id="@id/matchedListFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_list_24"
+        android:title="">
+    </item>
+
+    <item
+        android:enabled="true"
+        android:icon="@drawable/ic_chat_24"
+        android:title="">
+    </item>
+
+</menu>

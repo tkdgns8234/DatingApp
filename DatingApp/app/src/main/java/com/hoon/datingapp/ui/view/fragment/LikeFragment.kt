@@ -1,36 +1,50 @@
-package com.hoon.datingapp
+package com.hoon.datingapp.ui.view.fragment
 
 import android.app.AlertDialog
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.hoon.datingapp.databinding.ActivityLikeBinding
+import com.hoon.datingapp.data.model.CardItem
+import com.hoon.datingapp.ui.adapter.CardItemAdapter
+import com.hoon.datingapp.R
+import com.hoon.datingapp.databinding.FragmentLikeBinding
+import com.hoon.datingapp.ui.view.LoginActivity
 import com.hoon.datingapp.util.DBKey
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.Direction
 
-class LikeActivity : AppCompatActivity() {
-    private val binding: ActivityLikeBinding by lazy {
-        ActivityLikeBinding.inflate(layoutInflater)
-    }
+class LikeFragment : Fragment() {
+    private var _binding: FragmentLikeBinding? = null // 메모리 leak 방지
+    private val binding get() = _binding!! // null 체크 없이 binding 객체에 접근하기 위함
+
     private var auth = FirebaseAuth.getInstance()
     private lateinit var usersDB: DatabaseReference
     private val cardStackAdapter = CardItemAdapter()
     private val cardItems = mutableListOf<CardItem>()
     private val cardStackLayoutManager by lazy {
-        CardStackLayoutManager(this, CardStackListener())
+        CardStackLayoutManager(context, CardStackListener())
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentLikeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         usersDB = Firebase.database.reference.child(DBKey.DB_NAME)
             .child(DBKey.USERS)
@@ -40,15 +54,20 @@ class LikeActivity : AppCompatActivity() {
         initButton()
     }
 
-    private fun initButton() {
-        binding.btnLogout.setOnClickListener {
-            auth.signOut()
-            finish()
-        }
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
 
-        binding.btnMatchList.setOnClickListener {
-            startActivity(Intent(this, MatchedListActivity::class.java))
-        }
+    private fun initButton() {
+//        binding.btnLogout.setOnClickListener {
+//            auth.signOut()
+//
+//            startActivity(
+//                Intent(context, LoginActivity::class.java)
+//                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+//            )
+//        }
     }
 
     private fun initCardStackView() {
@@ -112,14 +131,14 @@ class LikeActivity : AppCompatActivity() {
 
     // user name을 입력받는 dialog
     private fun showNameInputDialog() {
-        val editText = EditText(this)
+        val editText = EditText(context)
 
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(context)
             .setTitle("이름을 입력해 주세요")
             .setView(editText)
             .setPositiveButton("확인") { _, _ ->
                 if (editText.text.isEmpty()) {
-                    Toast.makeText(this@LikeActivity, "이름을 다시 입력해주세요", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "이름을 다시 입력해주세요", Toast.LENGTH_SHORT).show()
                     showNameInputDialog() // positive 버튼 클릭 시 종료되기에 다시 open
                 } else {
                     saveUserName(editText.text.toString())
@@ -142,8 +161,12 @@ class LikeActivity : AppCompatActivity() {
 
     private fun getCurrentUserId(): String {
         if (auth.currentUser == null) {
-            Toast.makeText(this, getString(R.string.status_not_login), Toast.LENGTH_SHORT).show()
-            finish() // Mainactivity의 onstart 콜백이 호출되면서 다시 login activity로 이동
+            Toast.makeText(context, getString(R.string.status_not_login), Toast.LENGTH_SHORT).show()
+
+            startActivity(
+                Intent(context, LoginActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
         }
 
         return auth.currentUser!!.uid
@@ -167,7 +190,7 @@ class LikeActivity : AppCompatActivity() {
         saveMatchIfOtherUserLikeMe(card.userID)
 
         Toast.makeText(
-            this, "${card.name}님을 like 하셨습니다.", Toast.LENGTH_SHORT
+            context, "${card.name}님을 like 하셨습니다.", Toast.LENGTH_SHORT
         ).show()
     }
 
@@ -214,7 +237,7 @@ class LikeActivity : AppCompatActivity() {
             .setValue(true)
 
         Toast.makeText(
-            this, "" +
+            context, "" +
                     "${card.name}님을 dis like 하셨습니다.", Toast.LENGTH_SHORT
         ).show()
     }

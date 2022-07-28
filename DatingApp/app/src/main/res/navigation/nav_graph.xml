@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/likeFragment">
+
+    <fragment
+        android:id="@+id/likeFragment"
+        android:name="com.hoon.datingapp.ui.view.fragment.LikeFragment"
+        android:label="fragment_like"
+        tools:layout="@layout/fragment_like" />
+    <fragment
+        android:id="@+id/matchedListFragment"
+        android:name="com.hoon.datingapp.ui.view.fragment.MatchedListFragment"
+        android:label="fragment_matched_list"
+        tools:layout="@layout/fragment_matched_list" />
+</navigation>

@@ -1,31 +1,31 @@
-package com.hoon.datingapp
+package com.hoon.datingapp.ui.view
 
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
+import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.hoon.datingapp.R
 import com.hoon.datingapp.databinding.ActivityLoginBinding
 import com.hoon.datingapp.util.Constants
 import com.hoon.datingapp.util.DBKey
 
-
 class LoginActivity : AppCompatActivity() {
-    lateinit var auth: FirebaseAuth
-    lateinit var callbackManager: CallbackManager
-
     private val binding by lazy {
         ActivityLoginBinding.inflate(layoutInflater)
     }
+
+    lateinit var auth: FirebaseAuth
+    lateinit var callbackManager: CallbackManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,15 +34,21 @@ class LoginActivity : AppCompatActivity() {
         auth = Firebase.auth
         callbackManager = CallbackManager.Factory.create()
 
-        initLoginBtn()
-        initSignUpBtn()
-        initEmailAndPasswordEditText()
         binding.btnFacebookLogin.setOnClickListener { initFacebookLoginBtn() }
+        binding.btnCreateAuth.setOnClickListener {
+            startActivity(Intent(this, SignUpAndLoginActivity::class.java))
+        }
     }
 
     private fun initFacebookLoginBtn() {
-        binding.btnFacebookLogin.setPermissions(Constants.FACEBOOK_INFO_EMAIL, Constants.FACEBOOK_INFO_PUBLIC_PROFILE) // 로그인 후 가져올 정보 기입
-        binding.btnFacebookLogin.registerCallback(
+        val loginManager = LoginManager.getInstance()
+
+        loginManager.logInWithReadPermissions(
+            this,
+            mutableListOf(Constants.FACEBOOK_INFO_EMAIL, Constants.FACEBOOK_INFO_PUBLIC_PROFILE)
+        )
+
+        loginManager.registerCallback(
             callbackManager,
             object : FacebookCallback<LoginResult> {
                 override fun onSuccess(result: LoginResult) {
@@ -56,17 +62,19 @@ class LoginActivity : AppCompatActivity() {
                 }
 
                 override fun onError(error: FacebookException) {
-                    Toast.makeText(this@LoginActivity, getString(R.string.login_failed_facebook), Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(
+                        this@LoginActivity,
+                        getString(R.string.login_failed_facebook),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-
             })
     }
 
     private fun loginWithFacebook(result: LoginResult) {
         val credential = FacebookAuthProvider.getCredential(result.accessToken.token)
         auth.signInWithCredential(credential)
-            .addOnCompleteListener(this@LoginActivity) { task ->
+            .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     handleLoginResult()
                 } else {
@@ -77,56 +85,6 @@ class LoginActivity : AppCompatActivity() {
                     )
                 }
             }
-    }
-
-
-    // email, pw 가 비어있으면 Firebase 로그인 시 에러 발생 -> 비어있으면 버튼 비활성화
-    private fun initEmailAndPasswordEditText() {
-        binding.etEmail.addTextChangedListener {
-            val enable = binding.etEmail.text.isNotEmpty() && binding.etPassword.text.isNotEmpty()
-            binding.btnLogin.isEnabled = enable
-            binding.btnSignUp.isEnabled = enable
-        }
-
-        binding.etPassword.addTextChangedListener {
-            val enable = binding.etEmail.text.isNotEmpty() && binding.etPassword.text.isNotEmpty()
-            binding.btnLogin.isEnabled = enable
-            binding.btnSignUp.isEnabled = enable
-        }
-    }
-
-    // login with firebase
-    private fun initLoginBtn() {
-        binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text.toString()
-            val pw = binding.etPassword.text.toString()
-
-            auth.signInWithEmailAndPassword(email, pw).addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    handleLoginResult()
-                } else {
-                    Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-        }
-    }
-
-    //signup with firebase
-    private fun initSignUpBtn() {
-        binding.btnSignUp.setOnClickListener {
-            val email = binding.etEmail.text.toString()
-            val pw = binding.etPassword.text.toString()
-
-            auth.createUserWithEmailAndPassword(email, pw).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(this, getString(R.string.signup_success_click_login_button), Toast.LENGTH_SHORT)
-                        .show()
-                } else {
-                    Toast.makeText(this, getString(R.string.signup_failed), Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
     }
 
     private fun handleLoginResult() {
@@ -143,7 +101,11 @@ class LoginActivity : AppCompatActivity() {
         currentUserDB.updateChildren(user)
 
         Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
-        finish()
+
+        startActivity(
+            Intent(this, MainActivity::class.java)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
