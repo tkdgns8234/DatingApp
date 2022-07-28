@@ -10,7 +10,10 @@
     <color name="sky_blue">#47E2F6</color>
     <color name="transparent">#00000000</color>
     <color name="gray">#3C3939</color>
+    <color name="light_gray">#B7AEACAC</color>
     <color name="pink">#FF67D9</color>
+    <color name="color_peach">#DAFB8EE0</color>
+    <color name="color_red">#DAF63377</color>
 
 
 </resources>

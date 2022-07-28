@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageButton
-            android:id="@+id/profile_image"
+            android:id="@+id/image_btn_profile"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/shape_oval"

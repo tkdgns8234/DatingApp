@@ -12,9 +12,12 @@ class DBKey {
         const val LIKED_BY = "likedBy"
     }
 }
+
 class Constants {
     companion object {
         const val FACEBOOK_INFO_EMAIL = "email"
         const val FACEBOOK_INFO_PUBLIC_PROFILE = "public_profile"
+        const val INTENT_KEY_PROFILE_NAME = "profile_name"
+        const val INTENT_KEY_PROFILE_IMAGE_URI = "profile_image_uri"
     }
 }

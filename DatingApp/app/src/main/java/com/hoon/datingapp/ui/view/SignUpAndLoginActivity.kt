@@ -79,11 +79,9 @@ class SignUpAndLoginActivity : AppCompatActivity() {
                         this,
                         getString(R.string.signup_success_click_login_button),
                         Toast.LENGTH_SHORT
-                    )
-                        .show()
+                    ).show()
                 } else {
-                    Toast.makeText(this, getString(R.string.signup_failed), Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(this, getString(R.string.signup_failed), Toast.LENGTH_SHORT).show()
                 }
             }
         }

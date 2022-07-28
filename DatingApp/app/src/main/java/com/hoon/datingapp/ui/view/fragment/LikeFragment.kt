@@ -1,12 +1,10 @@
 package com.hoon.datingapp.ui.view.fragment
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
@@ -49,25 +47,14 @@ class LikeFragment : Fragment() {
         usersDB = Firebase.database.reference.child(DBKey.DB_NAME)
             .child(DBKey.USERS)
 
-        getCurrentUser()
+        getUnSelectedUsers()
         initCardStackView()
-        initButton()
+        binding.test.setOnClickListener { auth.signOut() }
     }
 
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
-    }
-
-    private fun initButton() {
-//        binding.btnLogout.setOnClickListener {
-//            auth.signOut()
-//
-//            startActivity(
-//                Intent(context, LoginActivity::class.java)
-//                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//            )
-//        }
     }
 
     private fun initCardStackView() {
@@ -113,51 +100,6 @@ class LikeFragment : Fragment() {
         })
     }
 
-    private fun getCurrentUser() {
-        val currentUserDB = usersDB.child(getCurrentUserId())
-        // realtime db는 listener 를 통해 데이터를 가져옴
-        // addListenerForSingleValueEvent 의 경우 한번 호출되고 콜백이 즉시 삭제됨
-        currentUserDB.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.child(DBKey.USER_NAME).value == null) {
-                    showNameInputDialog()
-                }
-                getUnSelectedUsers()
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    // user name을 입력받는 dialog
-    private fun showNameInputDialog() {
-        val editText = EditText(context)
-
-        AlertDialog.Builder(context)
-            .setTitle("이름을 입력해 주세요")
-            .setView(editText)
-            .setPositiveButton("확인") { _, _ ->
-                if (editText.text.isEmpty()) {
-                    Toast.makeText(context, "이름을 다시 입력해주세요", Toast.LENGTH_SHORT).show()
-                    showNameInputDialog() // positive 버튼 클릭 시 종료되기에 다시 open
-                } else {
-                    saveUserName(editText.text.toString())
-                }
-            }
-            .setCancelable(false)
-            .show()
-    }
-
-    // user name 추가해서 db에 저장
-    private fun saveUserName(name: String) {
-        // 기존 데이터는 유지하고 데이터 추가하는방법이 없는거같네,, 아쉽네
-        val uid = getCurrentUserId()
-        val currentUserDB = usersDB.child(uid)
-        val user = mutableMapOf<String, Any>()
-        user[DBKey.USER_ID] = uid
-        user[DBKey.USER_NAME] = name
-        currentUserDB.updateChildren(user)
-    }
 
     private fun getCurrentUserId(): String {
         if (auth.currentUser == null) {
