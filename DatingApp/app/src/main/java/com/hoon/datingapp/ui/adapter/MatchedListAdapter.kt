@@ -5,13 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.hoon.datingapp.data.model.CardItem
+import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.ItemMatchedListBinding
 
-class MatchedListAdapter : ListAdapter<CardItem, MatchedListAdapter.ViewHolder>(diffUtil) {
+class MatchedListAdapter : ListAdapter<UserProfile, MatchedListAdapter.ViewHolder>(diffUtil) {
     inner class ViewHolder(private val binding: ItemMatchedListBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(cardItem: CardItem) {
-            binding.tvName.text = cardItem.name
+        fun bind(userProfile: UserProfile) {
+            binding.tvName.text = userProfile.userName
         }
     }
 
@@ -33,12 +33,12 @@ class MatchedListAdapter : ListAdapter<CardItem, MatchedListAdapter.ViewHolder>(
     }
 
     companion object {
-        private val diffUtil = object : DiffUtil.ItemCallback<CardItem>() {
-            override fun areItemsTheSame(oldItem: CardItem, newItem: CardItem): Boolean {
+        private val diffUtil = object : DiffUtil.ItemCallback<UserProfile>() {
+            override fun areItemsTheSame(oldItem: UserProfile, newItem: UserProfile): Boolean {
                 return oldItem.hashCode() == newItem.hashCode()
             }
 
-            override fun areContentsTheSame(oldItem: CardItem, newItem: CardItem): Boolean {
+            override fun areContentsTheSame(oldItem: UserProfile, newItem: UserProfile): Boolean {
                 return oldItem == newItem
             }
 

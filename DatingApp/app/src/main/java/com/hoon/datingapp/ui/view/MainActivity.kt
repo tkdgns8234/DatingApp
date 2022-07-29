@@ -1,26 +1,27 @@
 package com.hoon.datingapp.ui.view
 
-import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.hoon.datingapp.R
+import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.ActivityMainBinding
 import com.hoon.datingapp.util.Constants
 import com.hoon.datingapp.util.DBKey
@@ -31,9 +32,7 @@ class MainActivity : AppCompatActivity() {
     }
     private lateinit var usersDB: DatabaseReference
     private val auth = FirebaseAuth.getInstance()
-
-    private lateinit var userName: String
-    private lateinit var userImageUri: String
+    private val storage = Firebase.storage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         usersDB = Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.USERS)
 
         setBottomNavigationView()
-        checkIfUserIdExistInDB()
+        setProfileIfNewUser()
     }
 
     private fun setBottomNavigationView() {
@@ -52,20 +51,33 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.setupWithNavController(navController)
     }
 
-    private fun checkIfUserIdExistInDB() {
-        val uid = auth.currentUser?.uid.orEmpty()
-        val userDB = usersDB.child(uid).child(DBKey.USER_NAME)
+    private fun setProfileIfNewUser() {
+        val uid = getCurrentUserId()
+        val userDB = usersDB.child(uid)
         userDB.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                // user name이 null인 경우 지금 가입한 회원
-                if (snapshot.value == null) {
+                // 새로 가입한 회원인 경우
+                if (snapshot.child(DBKey.USER_NAME).value == null) {
+                    // 프로필 설정창으로 이동
                     val intent = Intent(this@MainActivity, ProfileActivity::class.java)
                     profileResultLauncher.launch(intent)
+                }
+                else {
+                    // 기존 회원인 경우
+                    val uri = snapshot.child(DBKey.USER_IMAGE_URI).value.toString()
+                    setUserIcon(uri.toUri())
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
+    }
+
+    private fun setUserIcon(uri: Uri) {
+        Glide
+            .with(this)
+            .load(uri)
+            .into(binding.imageBtnProfile)
     }
 
     private val profileResultLauncher =
@@ -74,76 +86,69 @@ class MainActivity : AppCompatActivity() {
                 val intent = it.data
 
                 if (intent != null) {
-                    userName = intent.getStringExtra(Constants.INTENT_KEY_PROFILE_NAME).orEmpty()
-                    userImageUri = intent.getStringExtra(Constants.INTENT_KEY_PROFILE_IMAGE_URI).orEmpty()
+                    val name = intent.getStringExtra(Constants.INTENT_KEY_PROFILE_NAME).orEmpty()
+                    val imageUri =
+                        intent.getStringExtra(Constants.INTENT_KEY_PROFILE_IMAGE_URI).orEmpty()
+
+                    saveUserProfile(name, imageUri.toUri())
                 }
             }
         }
 
-//    private fun setUserProfile() {
-//        setUserName()
-//        setUserImage()
-//    }
-//
-//    private fun setUserImage() {
-//
-//    }
-//
-//    private fun setUserName() {
-//        val currentUserDB = usersDB.child(getCurrentUserId())
-//        // realtime db는 listener 를 통해 데이터를 가져옴
-//        // addListenerForSingleValueEvent 의 경우 한번 호출되고 콜백이 즉시 삭제됨
-//        currentUserDB.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                if (snapshot.child(DBKey.USER_NAME).value == null) {
-//                    showNameInputDialog()
-//                }
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {}
-//        })
-//    }
-//
-//    // user name을 입력받는 dialog
-//    private fun showNameInputDialog() {
-//        val editText = EditText(this)
-//
-//        AlertDialog.Builder(this)
-//            .setTitle("이름을 입력해 주세요")
-//            .setView(editText)
-//            .setPositiveButton("확인") { _, _ ->
-//                if (editText.text.isEmpty()) {
-//                    Toast.makeText(this, "이름을 다시 입력해주세요", Toast.LENGTH_SHORT).show()
-//                    showNameInputDialog() // positive 버튼 클릭 시 종료되기에 다시 open
-//                } else {
-//                    saveUserName(editText.text.toString())
-//                }
-//            }
-//            .setCancelable(false)
-//            .show()
-//    }
-//
-//    // user name 추가해서 db에 저장
-//    private fun saveUserName(name: String) {
-//        // 기존 데이터는 유지하고 데이터 추가하는방법이 없는거같네,, 아쉽네
-//        val uid = getCurrentUserId()
-//        val currentUserDB = usersDB.child(uid)
-//        val user = mutableMapOf<String, Any>()
-//        user[DBKey.USER_ID] = uid
-//        user[DBKey.USER_NAME] = name
-//        currentUserDB.updateChildren(user)
-//    }
-//
-//    private fun getCurrentUserId(): String {
-//        if (auth.currentUser == null) {
-//            Toast.makeText(this, getString(R.string.status_not_login), Toast.LENGTH_SHORT).show()
-//
-//            startActivity(
-//                Intent(this, LoginActivity::class.java)
-//                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-//            )
-//        }
-//
-//        return auth.currentUser!!.uid
-//    }
+    private fun saveUserProfile(name: String, imageUri: Uri) {
+        uploadPhoto(
+            imageUri,
+            successHandler = { uri ->
+                uploadProfile(name, uri)
+                setUserIcon(uri.toUri())
+            },
+            errorHandler = {
+                Toast.makeText(this, "이미지 파일 업로드에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+    private fun uploadPhoto(
+        imageUri: Uri,
+        successHandler: (String) -> Unit,
+        errorHandler: () -> Unit
+    ) {
+        val uid = getCurrentUserId()
+        val fileName = "${uid}_${System.currentTimeMillis()}.png"
+        storage.reference.child(Constants.FIREBASE_STORAGE_PATH_IMAGES).child(fileName)
+            .putFile(imageUri)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // 저장한 file을 바로 uri로 다운로드 후 DB, 모델클래스에 저장
+                    storage.reference.child(Constants.FIREBASE_STORAGE_PATH_IMAGES).child(fileName)
+                        .downloadUrl
+                        .addOnSuccessListener(this) {
+                            successHandler(it.toString())
+                        }
+                        .addOnFailureListener {
+                            errorHandler()
+                        }
+                } else {
+                    errorHandler()
+                }
+            }
+    }
+
+    private fun uploadProfile(name: String, imageUri: String) {
+        val uid = getCurrentUserId()
+        val userProfile = UserProfile(uid, name, imageUri)
+        usersDB.child(uid).setValue(userProfile)
+    }
+
+    private fun getCurrentUserId(): String {
+        if (auth.currentUser == null) {
+            Toast.makeText(this, getString(R.string.status_not_login), Toast.LENGTH_SHORT).show()
+
+            startActivity(
+                Intent(this, LoginActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
+        }
+        return auth.currentUser!!.uid
+    }
 }

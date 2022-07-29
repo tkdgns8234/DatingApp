@@ -33,6 +33,30 @@ class ProfileActivity : AppCompatActivity() {
         binding.btnSave.setOnClickListener { initSaveBtn() }
     }
 
+    private fun loadImage() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "image/*"
+        galleryImageLauncher.launch(intent)
+    }
+
+    private val galleryImageLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == RESULT_OK && it.data != null) {
+                val uri = it.data!!.data
+                cropImage(uri)
+            }
+        }
+
+    private fun cropImage(uri: Uri?) {
+        val intent =
+            CropImage
+                .activity(uri) // crop 이미지 uri 지정
+                .setCropShape(CropImageView.CropShape.RECTANGLE) // crop 모양 지정
+                .getIntent(this)
+
+        cropImageLauncher.launch(intent)
+    }
+
     private fun initSaveBtn() {
         val name = binding.etName.text.toString()
         val uri = imageURI?.toString()
@@ -49,38 +73,15 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadImage() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "image/*"
-        galleryImageLauncher.launch(intent)
-    }
-
-    private val galleryImageLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == RESULT_OK && it.data != null) {
-                val uri = it.data!!.data
-                cropImage(uri)
+    private var cropImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            CropImage.getActivityResult(result.data)?.let { cropResult ->
+                imageURI = cropResult.uri
 
                 Glide
                     .with(this)
                     .load(imageURI)
                     .into(binding.imageBtnProfile)
-            }
-        }
-
-    private fun cropImage(uri: Uri?) {
-        val intent = CropImage
-            .activity(uri) // crop 이미지 uri 지정
-            .setCropShape(CropImageView.CropShape.RECTANGLE) // crop 모양 지정
-            .getIntent(this)
-
-        cropImageLauncher.launch(intent)
-    }
-
-    private var cropImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == RESULT_OK) {
-            CropImage.getActivityResult(result.data)?.let { cropResult ->
-                imageURI = cropResult.uri
             }
         }
     }

@@ -14,7 +14,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.hoon.datingapp.ui.adapter.MatchedListAdapter
 import com.hoon.datingapp.R
-import com.hoon.datingapp.data.model.CardItem
+import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.FragmentMatchedListBinding
 import com.hoon.datingapp.ui.view.LoginActivity
 import com.hoon.datingapp.util.DBKey
@@ -26,7 +26,7 @@ class MatchedListFragment : Fragment() {
     private val auth = FirebaseAuth.getInstance()
     private lateinit var usersDB: DatabaseReference
     private val adapter = MatchedListAdapter()
-    private val cardItems = mutableListOf<CardItem>()
+    private val UserProfiles = mutableListOf<UserProfile>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,6 +61,7 @@ class MatchedListFragment : Fragment() {
         val matchedDB = usersDB.child(getCurrentUserId()).child(DBKey.LIKED_BY).child(DBKey.MATCH)
         matchedDB.addChildEventListener(object :ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                // 매칭된 uid가 null이 아닌경우
                 if (!snapshot.key.isNullOrEmpty()) {
                     getMatchedUser(snapshot.key.orEmpty())
                 }
@@ -78,14 +79,14 @@ class MatchedListFragment : Fragment() {
     }
 
     private fun getMatchedUser(uid: String) {
-        val userNameDB = usersDB.child(uid).child(DBKey.USER_NAME)
-        userNameDB.addListenerForSingleValueEvent(object :ValueEventListener {
+        val matchedUserDB = usersDB.child(uid)
+        matchedUserDB.addListenerForSingleValueEvent(object :ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.value != null) {
-                    val name = snapshot.value.toString()
-                    cardItems.add(CardItem(uid, name))
-                    adapter.submitList(cardItems)
-                }
+                val matchedUserProfile = snapshot.getValue(UserProfile::class.java)
+                matchedUserProfile ?: return
+
+                UserProfiles.add(matchedUserProfile)
+                adapter.submitList(UserProfiles)
             }
 
             override fun onCancelled(error: DatabaseError) {}

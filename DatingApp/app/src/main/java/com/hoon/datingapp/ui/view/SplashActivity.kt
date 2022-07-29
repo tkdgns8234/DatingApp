@@ -18,13 +18,26 @@ import com.hoon.datingapp.databinding.ActivitySplashBinding
     - opensource library yuyakaido/CardStackView 사용하기
         - 애니메이션 사용 시 open library 사용하는것이 시간 절감됨 -> github에서 찾아서 사용
     - Recyclerview 사용하기 (with Diffutil)
+    - Glide
+        - android 내부 데이터를 uri 를 통해 접근 시 Glide 사용이 필요 없음
+        - 외부 서버에 저장된 uri를 http 프로토콜을 통해 접근할 때 거쳐야할 여러 과정들을 간단히 구현하도록 도와준다.
 
 TODO:
  1. 디자인 변경하기
+    -> 진행 중
+    material editText 색상 변경, bottom nav 색상 변경
  2. 사진 불러오기 기능 추가하기
+    -> 완료, contentsProvider, image crop 라이브러리 사용
  3. matchedListActivity 변경하기
  4. bottom navigation 추가 및 activity -> fragment 로 변경하기, androidx navigation 사용하기
+    -> 완료
  5. FB DB에 데이터 추가 시, data class 를 이용해 추가하도록 변경하기
+    -> 완료
+ 6. 키보드 enter 액션 처리하기
+ 7. like 화면 만들기
+    -> 진행중
+ 8. 채팅 화면 만들기
+ 9. 매칭 리스트 화면 만들기
  */
 
 class SplashActivity : AppCompatActivity() {

@@ -95,9 +95,7 @@ class LoginActivity : AppCompatActivity() {
         val uid = auth.currentUser?.uid.orEmpty()
         val currentUserDB =
             Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.USERS).child(uid)
-        val user = mutableMapOf<String, Any>()
-        user[DBKey.USER_ID] = uid
-        currentUserDB.updateChildren(user)
+        currentUserDB.child(DBKey.USER_ID).setValue(uid)
 
         Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
 

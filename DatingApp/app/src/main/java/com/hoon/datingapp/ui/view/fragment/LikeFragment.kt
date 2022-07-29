@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.hoon.datingapp.data.model.CardItem
+import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.ui.adapter.CardItemAdapter
 import com.hoon.datingapp.R
 import com.hoon.datingapp.databinding.FragmentLikeBinding
@@ -27,9 +27,24 @@ class LikeFragment : Fragment() {
     private var auth = FirebaseAuth.getInstance()
     private lateinit var usersDB: DatabaseReference
     private val cardStackAdapter = CardItemAdapter()
-    private val cardItems = mutableListOf<CardItem>()
+    private val userProfiles = mutableListOf<UserProfile>()
     private val cardStackLayoutManager by lazy {
         CardStackLayoutManager(context, CardStackListener())
+    }
+
+    inner class CardStackListener : com.yuyakaido.android.cardstackview.CardStackListener {
+        override fun onCardDragging(direction: Direction?, ratio: Float) {}
+        override fun onCardSwiped(direction: Direction?) {
+            when (direction) {
+                Direction.Left -> disLike()
+                Direction.Right -> like()
+            }
+        }
+
+        override fun onCardRewound() {}
+        override fun onCardCanceled() {}
+        override fun onCardAppeared(view: View?, position: Int) {}
+        override fun onCardDisappeared(view: View?, position: Int) {}
     }
 
     override fun onCreateView(
@@ -47,9 +62,9 @@ class LikeFragment : Fragment() {
         usersDB = Firebase.database.reference.child(DBKey.DB_NAME)
             .child(DBKey.USERS)
 
-        getUnSelectedUsers()
         initCardStackView()
-        binding.test.setOnClickListener { auth.signOut() }
+        getUnSelectedUsers()
+//        binding.test.setOnClickListener { auth.signOut() }
     }
 
     override fun onDestroyView() {
@@ -64,75 +79,82 @@ class LikeFragment : Fragment() {
 
     private fun getUnSelectedUsers() {
         usersDB.addChildEventListener(object : ChildEventListener {
+            // 새로 추가된 유저 확인
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val currentUserID = getCurrentUserId()
-                if (cardItems.contains(snapshot.child(DBKey.USER_ID).value).not() &&
-                    snapshot.child(DBKey.USER_ID).value != currentUserID &&
-                    snapshot.child(DBKey.LIKED_BY).child(DBKey.LIKE).hasChild(currentUserID).not() &&
-                    snapshot.child(DBKey.LIKED_BY).child(DBKey.DIS_LIKE).hasChild(currentUserID).not()
+                val newProfile = snapshot.getValue(UserProfile::class.java) ?: return
+                val findResult = userProfiles.find { it.userID == newProfile.userID }
+
+                if (findResult == null &&
+                    newProfile.userID != currentUserID &&
+                    // 내가 like, dislike 한 적 있는 상대인지 확인
+                    snapshot.child(DBKey.LIKED_BY).child(DBKey.LIKE).hasChild(currentUserID)
+                        .not() &&
+                    snapshot.child(DBKey.LIKED_BY).child(DBKey.DIS_LIKE).hasChild(currentUserID)
+                        .not()
                 ) {
-                    val userID = snapshot.child(DBKey.USER_ID).value.toString()
-                    var name = getString(R.string.name_undecided)
-                    if (snapshot.child(DBKey.USER_NAME).value != null) {
-                        name = snapshot.child(DBKey.USER_NAME).value.toString()
-                    }
-                    val cardItem = CardItem(userID, name)
-                    cardItems.add(cardItem)
-                    cardStackAdapter.submitList(cardItems)
+                    userProfiles.add(newProfile)
+                    cardStackAdapter.submitList(userProfiles)
                 }
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                cardItems.find { cardItem ->
-                    cardItem.userID == snapshot.key
-                }?.let {
-                    it.name = snapshot.child(DBKey.USER_NAME).value.toString()
+                // 프로필이 변경된 유저가 있는경우 업데이트
+                val newProfile = snapshot.getValue(UserProfile::class.java) ?: return
+                val findResult =
+                    userProfiles.find {
+                        it.userID == newProfile.userID
+                    }
+
+                findResult?.let {
+                    it.userName = newProfile.userID
+                    it.imageURI = newProfile.imageURI
                 }
-                cardStackAdapter.submitList(cardItems)
+
+                cardStackAdapter.submitList(userProfiles)
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {}
-
             override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-
             override fun onCancelled(error: DatabaseError) {}
-
         })
     }
 
-
-    private fun getCurrentUserId(): String {
-        if (auth.currentUser == null) {
-            Toast.makeText(context, getString(R.string.status_not_login), Toast.LENGTH_SHORT).show()
-
-            startActivity(
-                Intent(context, LoginActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            )
-        }
-
-        return auth.currentUser!!.uid
-    }
-
     private fun like() {
-        // cardStackLayoutManager.topPosition 은 항상 1이 됨, cardItems.removeFirst() 를 수행하기 때문
-        val card =
-            cardItems[cardStackLayoutManager.topPosition - 1] // 현재 display 되고 있는 view의 position 반환, 1부터 시작, 상수값 0으로 바꿔도 무방
-        cardItems.removeFirst() // 현재 보유중인 data list도 제거해서 sync를 맞춘다.
-        cardStackAdapter.submitList(cardItems)
+        val otherUserProfile =
+            userProfiles[cardStackLayoutManager.topPosition - 1] // 현재 display 되고 있는 view의 position 반환, 1부터 시작
+        userProfiles.removeFirst() // like 했으니 더이상 표시하지 않는다.
+        cardStackAdapter.submitList(userProfiles)
 
         // 상대방의 userID의 like에 나의 id를 저장
-        usersDB.child(card.userID)
+        usersDB.child(otherUserProfile.userID)
             .child(DBKey.LIKED_BY)
             .child(DBKey.LIKE)
             .child(getCurrentUserId())
             .setValue(true)
 
         //서로 like 하여 매칭되었는지 확인
-        saveMatchIfOtherUserLikeMe(card.userID)
+        saveMatchIfOtherUserLikeMe(otherUserProfile.userID)
+
+        Toast.makeText(context, "${otherUserProfile.userName}님을 like 하셨습니다.", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun disLike() {
+        val otherUserProfile =
+            userProfiles[cardStackLayoutManager.topPosition - 1] // 현재 display 되고 있는 view의 position 반환, 1부터 시작
+        userProfiles.removeFirst()
+        cardStackAdapter.submitList(userProfiles)
+
+        // 상대방의 userID의 dislike에 나의 id를 저장
+        usersDB.child(otherUserProfile.userID)
+            .child(DBKey.LIKED_BY)
+            .child(DBKey.DIS_LIKE)
+            .child(getCurrentUserId())
+            .setValue(true)
 
         Toast.makeText(
-            context, "${card.name}님을 like 하셨습니다.", Toast.LENGTH_SHORT
+            context, "" +
+                    "${otherUserProfile.userName}님을 dis like 하셨습니다.", Toast.LENGTH_SHORT
         ).show()
     }
 
@@ -157,50 +179,24 @@ class LikeFragment : Fragment() {
                         .child(otherUserId)
                         .setValue(true)
                 }
-
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
     }
 
-    private fun disLike() {
-        // cardStackLayoutManager.topPosition 은 항상 1이 됨, cardItems.removeFirst() 를 수행하기 때문
-        val card =
-            cardItems[cardStackLayoutManager.topPosition - 1] // 현재 display 되고 있는 view의 position 반환, 1부터 시작
-        cardItems.removeFirst()
-        cardStackAdapter.submitList(cardItems)
+    private fun getCurrentUserId(): String {
+        if (auth.currentUser == null) {
+            Toast.makeText(context, getString(R.string.status_not_login), Toast.LENGTH_SHORT).show()
 
-        // 상대방의 userID의 like에 나의 id를 저장
-        usersDB.child(card.userID)
-            .child(DBKey.LIKED_BY)
-            .child(DBKey.DIS_LIKE)
-            .child(getCurrentUserId())
-            .setValue(true)
-
-        Toast.makeText(
-            context, "" +
-                    "${card.name}님을 dis like 하셨습니다.", Toast.LENGTH_SHORT
-        ).show()
-    }
-
-    inner class CardStackListener : com.yuyakaido.android.cardstackview.CardStackListener {
-        override fun onCardDragging(direction: Direction?, ratio: Float) {}
-
-        override fun onCardSwiped(direction: Direction?) {
-            when (direction) {
-                Direction.Left -> disLike()
-                Direction.Right -> like()
-            }
+            startActivity(
+                Intent(context, LoginActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
         }
 
-        override fun onCardRewound() {}
-
-        override fun onCardCanceled() {}
-
-        override fun onCardAppeared(view: View?, position: Int) {}
-
-        override fun onCardDisappeared(view: View?, position: Int) {}
-
+        return auth.currentUser!!.uid
     }
+
+
 }

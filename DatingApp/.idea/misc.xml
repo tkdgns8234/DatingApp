@@ -30,13 +30,16 @@
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_list_24.xml" value="0.13" />
+        <entry key="app/src/main/res/drawable/shape_color_pink_radius.xml" value="0.117" />
         <entry key="app/src/main/res/drawable/shape_oval.xml" value="0.13" />
+        <entry key="app/src/main/res/drawable/shape_profile_image.xml" value="0.117" />
         <entry key="app/src/main/res/layout/activity_like.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.20975494384765628" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_main_navigation.xml" value="0.28229166666666666" />
         <entry key="app/src/main/res/layout/activity_matched_list.xml" value="0.1259259259259259" />
         <entry key="app/src/main/res/layout/activity_matched_list_activity.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.1375" />
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.221875" />
         <entry key="app/src/main/res/layout/activity_signup_and_login.xml" value="0.12962962962962962" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.203125" />
