@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hoon.datingapp.data.model.UserProfile
-import com.hoon.datingapp.databinding.ItemCardBinding
+import com.hoon.datingapp.databinding.ItemCardListBinding
 
 class CardItemAdapter : ListAdapter<UserProfile, CardItemAdapter.CardViewHolder>(diffUtil) {
-    inner class CardViewHolder(val binding: ItemCardBinding) :
+    inner class CardViewHolder(val binding: ItemCardListBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(userProfile: UserProfile) {
@@ -27,7 +27,7 @@ class CardItemAdapter : ListAdapter<UserProfile, CardItemAdapter.CardViewHolder>
         viewType: Int
     ): CardViewHolder {
         return CardViewHolder(
-            ItemCardBinding.inflate(
+            ItemCardListBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false

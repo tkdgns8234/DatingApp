@@ -9,9 +9,10 @@
         android:id="@+id/tv_profile_settings"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/ef_diary_font"
         android:gravity="center"
         android:text="프로필 설정"
-        android:textColor="@color/gray"
+        android:textColor="@color/pink"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,7 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginTop="5dp"
-        android:background="@color/color_peach"
+        android:background="@color/peach"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_profile_settings" />
@@ -43,7 +44,7 @@
         android:foreground="@drawable/ic_plus_24"
         android:foregroundGravity="center"
         android:foregroundTint="@color/white"
-        app:backgroundTint="@color/color_red"
+        app:backgroundTint="@color/red"
         app:layout_constraintBottom_toBottomOf="@id/image_btn_profile"
         app:layout_constraintEnd_toEndOf="@id/image_btn_profile" />
 
@@ -60,7 +61,10 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/ef_diary_font"
+            android:inputType="textPersonName"
+            android:textStyle="bold" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -69,8 +73,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="95dp"
         android:background="@drawable/shape_color_pink_radius"
+        android:fontFamily="@font/ef_diary_font"
         android:text="저장"
         android:textColor="@color/white"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@id/image_btn_profile"
         app:layout_constraintStart_toStartOf="@id/image_btn_profile"
         app:layout_constraintTop_toBottomOf="@id/image_btn_profile" />

@@ -5,12 +5,24 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.hoon.datingapp.R
 import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.ItemMatchedListBinding
 
 class MatchedListAdapter : ListAdapter<UserProfile, MatchedListAdapter.ViewHolder>(diffUtil) {
     inner class ViewHolder(private val binding: ItemMatchedListBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(userProfile: UserProfile) {
+
+            with(binding.imageView) {
+                Glide
+                    .with(binding.root)
+                    .load(userProfile.imageURI)
+                    .into(this)
+
+                this.clipToOutline = true
+            }
+
             binding.tvName.text = userProfile.userName
         }
     }

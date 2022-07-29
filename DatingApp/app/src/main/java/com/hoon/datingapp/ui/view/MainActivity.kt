@@ -42,6 +42,10 @@ class MainActivity : AppCompatActivity() {
 
         setBottomNavigationView()
         setProfileIfNewUser()
+        binding.tvLogout.setOnClickListener {
+            auth.signOut()
+            getCurrentUserId()
+        }
     }
 
     private fun setBottomNavigationView() {
@@ -78,6 +82,7 @@ class MainActivity : AppCompatActivity() {
             .with(this)
             .load(uri)
             .into(binding.imageBtnProfile)
+        binding.imageBtnProfile.clipToOutline = true
     }
 
     private val profileResultLauncher =

@@ -64,7 +64,6 @@ class LikeFragment : Fragment() {
 
         initCardStackView()
         getUnSelectedUsers()
-//        binding.test.setOnClickListener { auth.signOut() }
     }
 
     override fun onDestroyView() {

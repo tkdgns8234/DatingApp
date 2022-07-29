@@ -12,15 +12,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.hoon.datingapp.ui.adapter.MatchedListAdapter
 import com.hoon.datingapp.R
 import com.hoon.datingapp.data.model.UserProfile
-import com.hoon.datingapp.databinding.FragmentMatchedListBinding
+import com.hoon.datingapp.databinding.FragmentChatBinding
+import com.hoon.datingapp.ui.adapter.MatchedListAdapter
 import com.hoon.datingapp.ui.view.LoginActivity
 import com.hoon.datingapp.util.DBKey
 
-class MatchedListFragment : Fragment() {
-    private var _binding: FragmentMatchedListBinding? = null
+class ChatFragment : Fragment() {
+    private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
 
     private val auth = FirebaseAuth.getInstance()
@@ -33,7 +33,7 @@ class MatchedListFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMatchedListBinding.inflate(inflater, container, false)
+        _binding = FragmentChatBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -53,13 +53,13 @@ class MatchedListFragment : Fragment() {
     }
 
     private fun initViews() {
-        binding.recyclerViewMatchedList.adapter = adapter
-        binding.recyclerViewMatchedList.layoutManager = LinearLayoutManager(context)
+        binding.recyclerViewLikeMeList.adapter = adapter
+        binding.recyclerViewLikeMeList.layoutManager = LinearLayoutManager(context)
     }
 
     private fun getMatchedUsers() {
         val matchedDB = usersDB.child(getCurrentUserId()).child(DBKey.LIKED_BY).child(DBKey.MATCH)
-        matchedDB.addChildEventListener(object :ChildEventListener {
+        matchedDB.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 // 매칭된 uid가 null이 아닌경우
                 if (!snapshot.key.isNullOrEmpty()) {
@@ -80,7 +80,7 @@ class MatchedListFragment : Fragment() {
 
     private fun getMatchedUser(uid: String) {
         val matchedUserDB = usersDB.child(uid)
-        matchedUserDB.addListenerForSingleValueEvent(object :ValueEventListener {
+        matchedUserDB.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val matchedUserProfile = snapshot.getValue(UserProfile::class.java)
                 matchedUserProfile ?: return
@@ -92,7 +92,6 @@ class MatchedListFragment : Fragment() {
             override fun onCancelled(error: DatabaseError) {}
         })
     }
-
 
     private fun getCurrentUserId(): String {
         if (auth.currentUser == null) {

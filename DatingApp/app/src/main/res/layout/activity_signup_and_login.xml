@@ -24,7 +24,9 @@
             android:id="@+id/et_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress" />
+            android:fontFamily="@font/ef_diary_font"
+            android:inputType="textEmailAddress"
+            android:textStyle="bold" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -36,6 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:hint="비밀번호"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layout_email">
@@ -44,6 +47,7 @@
             android:id="@+id/et_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/ef_diary_font"
             android:inputType="textPassword" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -55,8 +59,10 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="10dp"
         android:background="@drawable/shape_btn_white"
+        android:fontFamily="@font/ef_diary_font"
         android:text="@string/sign_up"
         android:textColor="@color/gray"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@id/btn_login"
         app:layout_constraintTop_toBottomOf="@id/layout_password" />
 
@@ -65,8 +71,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/shape_btn_white"
+        android:fontFamily="@font/ef_diary_font"
         android:text="@string/login"
         android:textColor="@color/gray"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/btn_signUp" />
 

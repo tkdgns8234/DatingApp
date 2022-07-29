@@ -13,7 +13,7 @@
         tools:layout="@layout/fragment_like" />
     <fragment
         android:id="@+id/matchedListFragment"
-        android:name="com.hoon.datingapp.ui.view.fragment.MatchedListFragment"
+        android:name="com.hoon.datingapp.ui.view.fragment.LikeMeListFragment"
         android:label="fragment_matched_list"
-        tools:layout="@layout/fragment_matched_list" />
+        tools:layout="@layout/fragment_like_me_list" />
 </navigation>
