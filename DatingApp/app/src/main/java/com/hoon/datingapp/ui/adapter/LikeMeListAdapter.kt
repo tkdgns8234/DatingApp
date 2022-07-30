@@ -6,12 +6,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.hoon.datingapp.R
 import com.hoon.datingapp.data.model.UserProfile
-import com.hoon.datingapp.databinding.ItemMatchedListBinding
+import com.hoon.datingapp.databinding.ItemLikeMeBinding
 
-class MatchedListAdapter : ListAdapter<UserProfile, MatchedListAdapter.ViewHolder>(diffUtil) {
-    inner class ViewHolder(private val binding: ItemMatchedListBinding) : RecyclerView.ViewHolder(binding.root) {
+class LikeMeListAdapter : ListAdapter<UserProfile, LikeMeListAdapter.ViewHolder>(diffUtil) {
+    inner class ViewHolder(private val binding: ItemLikeMeBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(userProfile: UserProfile) {
 
             with(binding.imageView) {
@@ -32,7 +31,7 @@ class MatchedListAdapter : ListAdapter<UserProfile, MatchedListAdapter.ViewHolde
         viewType: Int
     ): ViewHolder {
         return ViewHolder(
-            ItemMatchedListBinding.inflate(
+            ItemLikeMeBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false

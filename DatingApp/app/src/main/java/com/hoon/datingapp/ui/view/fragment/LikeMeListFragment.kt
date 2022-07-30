@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.hoon.datingapp.ui.adapter.MatchedListAdapter
+import com.hoon.datingapp.ui.adapter.LikeMeListAdapter
 import com.hoon.datingapp.R
 import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.FragmentLikeMeListBinding
@@ -25,7 +25,7 @@ class LikeMeListFragment : Fragment() {
 
     private val auth = FirebaseAuth.getInstance()
     private lateinit var usersDB: DatabaseReference
-    private val adapter = MatchedListAdapter()
+    private val adapter = LikeMeListAdapter()
     private val UserProfiles = mutableListOf<UserProfile>()
 
     override fun onCreateView(
@@ -53,8 +53,8 @@ class LikeMeListFragment : Fragment() {
     }
 
     private fun initViews() {
-        binding.recyclerViewLikeMeList.adapter = adapter
-        binding.recyclerViewLikeMeList.layoutManager = LinearLayoutManager(context)
+        binding.rvLikeMeList.adapter = adapter
+        binding.rvLikeMeList.layoutManager = LinearLayoutManager(context)
     }
 
     private fun getUsersLikeMe() {

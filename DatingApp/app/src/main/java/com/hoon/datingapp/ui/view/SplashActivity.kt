@@ -12,7 +12,7 @@ import com.hoon.datingapp.databinding.ActivitySplashBinding
         email login
         facebook login
     - Firebase Realtime Database
-        json 과 유사하게 key value 형식으로 데이터 저장
+        json (key value) 형식으로 데이터 저장
         DB 데이터 조회 함수 3가지 (리스너를통해 데이터 조회)
         데이터 추가 방법 3가지 setValue, updateChildren (map 형태로 데이터 추가), data class를 직접 추가
     - opensource library yuyakaido/CardStackView 사용하기
@@ -42,6 +42,25 @@ TODO:
  9. 매칭 리스트 화면 만들기
     -> 완료
  10. string 변경 (Toastmessage, xml)
+
+ DB 구조
+
+ db
+ users
+	id
+		info
+		likedby
+			match
+		chat
+			push.setvalue
+				chatroom클래스 항목들
+ chats
+	key
+		push.setvalue   //push를 해서 넣으면 나중에 데이터 순차 탐색 시 용이함
+			senderid:
+			message:
+			timestamp:
+
  */
 
 class SplashActivity : AppCompatActivity() {

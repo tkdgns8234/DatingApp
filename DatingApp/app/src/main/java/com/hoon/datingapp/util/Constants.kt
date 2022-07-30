@@ -12,7 +12,7 @@ class DBKey {
         const val LIKED_BY = "likedBy"
         const val LIKE = "like"
         const val DIS_LIKE = "dislike"
-        const val MATCH = "match"
+        const val CHAT = "chat"
     }
 }
 

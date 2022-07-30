@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.ui.adapter.CardItemAdapter
 import com.hoon.datingapp.R
+import com.hoon.datingapp.data.model.ChatRoom
 import com.hoon.datingapp.databinding.FragmentLikeBinding
 import com.hoon.datingapp.ui.view.LoginActivity
 import com.hoon.datingapp.util.DBKey
@@ -59,8 +60,7 @@ class LikeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        usersDB = Firebase.database.reference.child(DBKey.DB_NAME)
-            .child(DBKey.USERS)
+        usersDB = Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.USERS)
 
         initCardStackView()
         getUnSelectedUsers()
@@ -133,7 +133,7 @@ class LikeFragment : Fragment() {
             .setValue(true)
 
         //서로 like 하여 매칭되었는지 확인
-        saveMatchIfOtherUserLikeMe(otherUserProfile.userID)
+        makeChatIfOtherUserLikeMe(otherUserProfile.userID)
 
         Toast.makeText(context, "${otherUserProfile.userName}님을 like 하셨습니다.", Toast.LENGTH_SHORT).show()
     }
@@ -157,32 +157,33 @@ class LikeFragment : Fragment() {
         ).show()
     }
 
-    private fun saveMatchIfOtherUserLikeMe(otherUserId: String) {
+    private fun makeChatIfOtherUserLikeMe(otherUserId: String) {
         val myUserDB =
             usersDB.child(getCurrentUserId()).child(DBKey.LIKED_BY).child(DBKey.LIKE)
                 .child(otherUserId)
         myUserDB.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.value == true) {
-                    usersDB
-                        .child(otherUserId)
-                        .child(DBKey.LIKED_BY)
-                        .child(DBKey.MATCH)
-                        .child(getCurrentUserId())
-                        .setValue(true)
-
-                    usersDB
-                        .child(getCurrentUserId())
-                        .child(DBKey.LIKED_BY)
-                        .child(DBKey.MATCH)
-                        .child(otherUserId)
-                        .setValue(true)
+                    saveChatInfo(otherUserId, getCurrentUserId())
+                    saveChatInfo(getCurrentUserId(), otherUserId)
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {}
         })
     }
+
+    private fun saveChatInfo(myId: String, partnerId: String) {
+        var key = ""
+        listOf(myId, partnerId).sorted().forEach { key += it }
+
+        usersDB
+            .child(myId)
+            .child(DBKey.CHAT)
+            .push()
+            .setValue(ChatRoom(myId, partnerId, key, ""))
+    }
+
 
     private fun getCurrentUserId(): String {
         if (auth.currentUser == null) {
