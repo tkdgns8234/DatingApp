@@ -14,6 +14,10 @@
     <color name="pink">#E2F37CD4</color>
     <color name="peach">#DAFB8EE0</color>
     <color name="red">#DAF63377</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="deep_yellow">#D6C41E</color>
+    <color name="blue">#03A9F4</color>
+    <color name="depp_blue">#2196F3</color>
 
 
 </resources>

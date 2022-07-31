@@ -18,7 +18,9 @@ import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.FragmentChatListBinding
 import com.hoon.datingapp.ui.adapter.ChatListAdapter
 import com.hoon.datingapp.ui.adapter.LikeMeListAdapter
+import com.hoon.datingapp.ui.view.ChatActivity
 import com.hoon.datingapp.ui.view.LoginActivity
+import com.hoon.datingapp.util.Constants
 import com.hoon.datingapp.util.DBKey
 
 class ChatListFragment : Fragment() {
@@ -27,7 +29,7 @@ class ChatListFragment : Fragment() {
 
     private var auth = FirebaseAuth.getInstance()
     private lateinit var usersDB: DatabaseReference
-    private val adapter = ChatListAdapter()
+    private var adapter = ChatListAdapter()
     private val chatRooms = mutableListOf<ChatRoom>()
 
     override fun onCreateView(
@@ -44,14 +46,33 @@ class ChatListFragment : Fragment() {
 
         usersDB = Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.USERS)
         initViews()
-        getUsersMatched()
+        getMatchedUsers()
     }
 
-    private fun getUsersMatched() {
-        usersDB.child()
+    private fun getMatchedUsers() {
+        val userDB = usersDB.child(getCurrentUserId()).child(DBKey.CHAT)
+        userDB.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach {
+                    val model = it.getValue(ChatRoom::class.java)
+                    model ?: return
+
+                    chatRooms.add(model)
+                }
+                adapter.submitList(chatRooms)
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 
     private fun initViews() {
+        adapter.setOnClickListener { partnerID, chatKey ->
+            val intent = Intent(context, ChatActivity::class.java)
+            intent.putExtra(Constants.INTENT_KEY_CHAT_KEY, chatKey)
+            intent.putExtra(Constants.INTENT_KEY_PARTNER_ID, partnerID)
+            startActivity(intent)
+        }
         binding.rvChatList.adapter = adapter
         binding.rvChatList.layoutManager = LinearLayoutManager(context)
     }

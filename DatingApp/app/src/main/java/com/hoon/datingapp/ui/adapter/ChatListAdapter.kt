@@ -12,14 +12,17 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.hoon.datingapp.data.model.ChatRoom
-import com.hoon.datingapp.databinding.ItemChatBinding
+import com.hoon.datingapp.databinding.ItemChatListBinding
 import com.hoon.datingapp.util.DBKey
 
-class ChatListAdapter : ListAdapter<ChatRoom, ChatListAdapter.ViewHolder>(diffUtil) {
+class ChatListAdapter() : ListAdapter<ChatRoom, ChatListAdapter.ViewHolder>(diffUtil) {
     private val usersDB = Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.USERS)
+    private var myOnClickListener : ((partnerID:String, key: String) -> Unit)? = null
 
-    inner class ViewHolder(val binding: ItemChatBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemChatListBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(chatRoom: ChatRoom) {
+            binding.root.setOnClickListener { myOnClickListener?.let { it(chatRoom.partnerID, chatRoom.key) } }
+
             getPartnerInfo(
                 chatRoom.partnerID,
                 completeHandler = { name, imageURI ->
@@ -30,6 +33,7 @@ class ChatListAdapter : ListAdapter<ChatRoom, ChatListAdapter.ViewHolder>(diffUt
                         .with(binding.root)
                         .load(imageURI)
                         .into(binding.imageView)
+                    binding.imageView.clipToOutline = true
                 })
         }
 
@@ -48,8 +52,12 @@ class ChatListAdapter : ListAdapter<ChatRoom, ChatListAdapter.ViewHolder>(diffUt
         }
     }
 
+    fun setOnClickListener(listener: (partnerID: String, key: String) -> Unit) {
+        myOnClickListener = listener
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatListAdapter.ViewHolder {
-        val binding = ItemChatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemChatListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 

@@ -122,8 +122,14 @@ class LikeFragment : Fragment() {
     private fun like() {
         val otherUserProfile =
             userProfiles[cardStackLayoutManager.topPosition - 1] // 현재 display 되고 있는 view의 position 반환, 1부터 시작
+
+        otherUserProfile.userName
+        userProfiles[0].userName
+
         userProfiles.removeFirst() // like 했으니 더이상 표시하지 않는다.
         cardStackAdapter.submitList(userProfiles)
+
+        userProfiles.count()
 
         // 상대방의 userID의 like에 나의 id를 저장
         usersDB.child(otherUserProfile.userID)

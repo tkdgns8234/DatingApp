@@ -16,6 +16,7 @@
     </item>
 
     <item
+        android:id="@id/chatListFragment"
         android:enabled="true"
         android:icon="@drawable/ic_chat_24"
         android:title="">

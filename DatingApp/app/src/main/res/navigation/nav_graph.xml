@@ -16,4 +16,8 @@
         android:name="com.hoon.datingapp.ui.view.fragment.LikeMeListFragment"
         android:label="fragment_matched_list"
         tools:layout="@layout/fragment_like_me_list" />
+    <fragment
+        android:id="@+id/chatListFragment"
+        android:name="com.hoon.datingapp.ui.view.fragment.ChatListFragment"
+        android:label="ChatListFragment" />
 </navigation>

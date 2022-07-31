@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingVertical="10dp">
+    android:paddingVertical="10dp"
+    >
 
     <ImageView
         android:id="@+id/imageView"
@@ -34,5 +35,16 @@
         app:layout_constraintTop_toTopOf="@id/imageView"
         app:layout_constraintVertical_bias="0.3"
         tools:text="정상훈" />
+
+    <TextView
+        android:id="@+id/tv_lastMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="@color/light_gray"
+        app:layout_constraintStart_toStartOf="@id/tv_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_name"
+        tools:text="최근 입력 텍스트" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
