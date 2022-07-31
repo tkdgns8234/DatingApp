@@ -120,7 +120,10 @@ class MainActivity : AppCompatActivity() {
         setProfileIfNewUser()
         binding.tvLogout.setOnClickListener {
             auth.signOut()
-            getCurrentUserId()
+            startActivity(
+                Intent(this, LoginActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            )
         }
     }
 

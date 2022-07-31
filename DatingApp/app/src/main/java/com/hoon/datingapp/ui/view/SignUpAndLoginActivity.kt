@@ -30,7 +30,12 @@ class SignUpAndLoginActivity : AppCompatActivity() {
     private fun initViews() {
         initLoginBtn()
         initSignUpBtn()
+        initBackBtn()
         initEmailAndPasswordEditText()
+    }
+
+    private fun initBackBtn() {
+        binding.btnBack.setOnClickListener { finish() }
     }
 
     // email, pw 가 비어있으면 Firebase 로그인 시 에러 발생 -> 비어있으면 버튼 비활성화
