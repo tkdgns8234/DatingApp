@@ -20,6 +20,7 @@ import com.hoon.datingapp.ui.view.LoginActivity
 import com.hoon.datingapp.util.DBKey
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.Direction
+import com.yuyakaido.android.cardstackview.StackFrom
 
 class LikeFragment : Fragment() {
     private var _binding: FragmentLikeBinding? = null // 메모리 leak 방지
@@ -72,6 +73,7 @@ class LikeFragment : Fragment() {
     }
 
     private fun initCardStackView() {
+        cardStackLayoutManager.setStackFrom(StackFrom.Top)
         binding.cardStackView.layoutManager = cardStackLayoutManager
         binding.cardStackView.adapter = cardStackAdapter
     }
@@ -93,7 +95,7 @@ class LikeFragment : Fragment() {
                         .not()
                 ) {
                     userProfiles.add(newProfile)
-                    cardStackAdapter.submitList(userProfiles)
+                    cardStackAdapter.submitList(userProfiles.toMutableList())
                 }
             }
 
@@ -109,8 +111,7 @@ class LikeFragment : Fragment() {
                     it.userName = newProfile.userID
                     it.imageURI = newProfile.imageURI
                 }
-
-                cardStackAdapter.submitList(userProfiles)
+                cardStackAdapter.submitList(userProfiles.toMutableList())
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {}
@@ -121,15 +122,10 @@ class LikeFragment : Fragment() {
 
     private fun like() {
         val otherUserProfile =
-            userProfiles[cardStackLayoutManager.topPosition - 1] // 현재 display 되고 있는 view의 position 반환, 1부터 시작
+            userProfiles[cardStackLayoutManager.topPosition - 1]
 
-        otherUserProfile.userName
-        userProfiles[0].userName
-
-        userProfiles.removeFirst() // like 했으니 더이상 표시하지 않는다.
-        cardStackAdapter.submitList(userProfiles)
-
-        userProfiles.count()
+        userProfiles.removeAt(cardStackLayoutManager.topPosition - 1)
+        cardStackAdapter.submitList(userProfiles.toMutableList())
 
         // 상대방의 userID의 like에 나의 id를 저장
         usersDB.child(otherUserProfile.userID)
@@ -146,7 +142,7 @@ class LikeFragment : Fragment() {
 
     private fun disLike() {
         val otherUserProfile =
-            userProfiles[cardStackLayoutManager.topPosition - 1] // 현재 display 되고 있는 view의 position 반환, 1부터 시작
+            userProfiles[cardStackLayoutManager.topPosition - 1]
         userProfiles.removeFirst()
         cardStackAdapter.submitList(userProfiles)
 

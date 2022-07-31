@@ -1,5 +1,6 @@
 package com.hoon.datingapp.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.net.toUri
@@ -42,7 +43,7 @@ class CardItemAdapter : ListAdapter<UserProfile, CardItemAdapter.CardViewHolder>
     companion object {
         private val diffUtil = object : DiffUtil.ItemCallback<UserProfile>() {
             override fun areItemsTheSame(oldItem: UserProfile, newItem: UserProfile): Boolean {
-                return oldItem.hashCode() == newItem.hashCode()
+                return oldItem.userID == newItem.userID
             }
 
             override fun areContentsTheSame(oldItem: UserProfile, newItem: UserProfile): Boolean {

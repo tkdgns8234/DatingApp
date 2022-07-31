@@ -59,7 +59,7 @@ class ChatListFragment : Fragment() {
 
                     chatRooms.add(model)
                 }
-                adapter.submitList(chatRooms)
+                adapter.submitList(chatRooms.toMutableList())
             }
 
             override fun onCancelled(error: DatabaseError) {}

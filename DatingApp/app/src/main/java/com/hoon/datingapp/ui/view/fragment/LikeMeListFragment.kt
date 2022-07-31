@@ -26,7 +26,7 @@ class LikeMeListFragment : Fragment() {
     private val auth = FirebaseAuth.getInstance()
     private lateinit var usersDB: DatabaseReference
     private val adapter = LikeMeListAdapter()
-    private val UserProfiles = mutableListOf<UserProfile>()
+    private val userProfiles = mutableListOf<UserProfile>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,8 +85,8 @@ class LikeMeListFragment : Fragment() {
                 val likedUserProfile = snapshot.getValue(UserProfile::class.java)
                 likedUserProfile ?: return
 
-                UserProfiles.add(likedUserProfile)
-                adapter.submitList(UserProfiles)
+                userProfiles.add(likedUserProfile)
+                adapter.submitList(userProfiles.toMutableList())
             }
 
             override fun onCancelled(error: DatabaseError) {}

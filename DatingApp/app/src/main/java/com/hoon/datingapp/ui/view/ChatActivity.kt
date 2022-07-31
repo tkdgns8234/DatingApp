@@ -47,7 +47,7 @@ class ChatActivity : AppCompatActivity() {
                 chatItem ?: return
 
                 chatItemList.add(chatItem)
-                adapter.submitList(chatItemList)
+                adapter.submitList(chatItemList.toMutableList())
                 binding.rvChat.scrollToPosition(adapter.itemCount-1)
             }
 
