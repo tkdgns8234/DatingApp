@@ -7,8 +7,11 @@
     - Firebase Realtime Database
         - json (key value) 형식으로 데이터 저장
         - DB 데이터 조회 함수 4가지 (리스너를통해 데이터 조회, get() 을 통한 데이터 조회)
-            get() 을 이용하는 경우 캐시영역에서 가져오는게 아니라 서버에서 직접 조회해서 데이터를 가져옴
+            - get() 을 이용하는 경우 캐시영역에서 가져오는게 아니라 서버에서 직접 조회해서 데이터를 가져옴
             -> sync가 무조건 맞아야 하는 경우 사용
+            - 유의할 점
+                db 조회 시 fragment 의 경우 onViewCreated 생명주기에서 DB 콜백을 등록하면
+                리스너가 fragment view가 created 될 떄 마다 등록됨 -> ondestroyView에서 콜백 등록 해제 필요
         
         - 데이터 추가 방법 3가지 setValue, updateChildren (map 형태로 데이터 추가), data class를 이용해 추가하는 방법
         
