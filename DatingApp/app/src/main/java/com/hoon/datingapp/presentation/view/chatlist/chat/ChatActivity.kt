@@ -1,4 +1,4 @@
-package com.hoon.datingapp.ui.view
+package com.hoon.datingapp.presentation.view.chatlist.chat
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,9 +13,10 @@ import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.hoon.datingapp.R
-import com.hoon.datingapp.data.model.ChatItem
+import com.hoon.datingapp.data.model.Message
 import com.hoon.datingapp.databinding.ActivityChatBinding
-import com.hoon.datingapp.ui.adapter.ChatAdapter
+import com.hoon.datingapp.presentation.adapter.ChatAdapter
+import com.hoon.datingapp.presentation.view.login.LoginActivity
 import com.hoon.datingapp.util.Constants
 import com.hoon.datingapp.util.DBKey
 
@@ -25,7 +26,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private val auth = FirebaseAuth.getInstance()
-    private val chatItemList = mutableListOf<ChatItem>()
+    private val messageList = mutableListOf<Message>()
     private val adapter = ChatAdapter(getCurrentUserId())
     private lateinit var chatDB: DatabaseReference
 
@@ -43,11 +44,11 @@ class ChatActivity : AppCompatActivity() {
         chatDB = Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.CHATS).child(chatKey)
         chatDB.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val chatItem = snapshot.getValue(ChatItem::class.java)
-                chatItem ?: return
+                val message = snapshot.getValue(Message::class.java)
+                message ?: return
 
-                chatItemList.add(chatItem)
-                adapter.submitList(chatItemList.toMutableList())
+                messageList.add(message)
+                adapter.submitList(messageList.toMutableList())
                 binding.rvChat.scrollToPosition(adapter.itemCount-1)
             }
 
@@ -70,12 +71,12 @@ class ChatActivity : AppCompatActivity() {
 
         binding.btnSend.isEnabled = false
         binding.btnSend.setOnClickListener {
-            val chatItem = ChatItem(
+            val message = Message(
                 getCurrentUserId(),
                 binding.etChat.text.toString(),
                 System.currentTimeMillis()
             )
-            chatDB.push().setValue(chatItem)
+            chatDB.push().setValue(message)
 
             binding.etChat.text?.clear()
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager

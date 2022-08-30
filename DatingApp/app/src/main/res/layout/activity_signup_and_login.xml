@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/shape_color_pink"
     android:padding="30dp"
-    tools:context=".ui.view.SignUpAndLoginActivity">
+    tools:context=".presentation.view.signup.SignUpActivity">
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_back"

@@ -1,4 +1,4 @@
-package com.hoon.datingapp.ui.adapter
+package com.hoon.datingapp.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

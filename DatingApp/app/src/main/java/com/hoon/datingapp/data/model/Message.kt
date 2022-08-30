@@ -1,6 +1,6 @@
 package com.hoon.datingapp.data.model
 
-data class ChatItem(
+data class Message(
     val senderID: String,
     val message: String,
     val timeStamp: Long,

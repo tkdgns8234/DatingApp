@@ -4,12 +4,14 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../../../layout/custom_preview.xml" value="0.9629629629629629" />
+        <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/drawable/ic_back_24.xml" value="0.1375" />
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/drawable/ic_chat_24.xml" value="0.1835" />
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1835" />
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.1835" />
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/drawable/ic_list_24.xml" value="0.164" />
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/drawable/ic_plus_24.xml" value="0.164" />
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/drawable/selector_bottomnavigation_icon.xml" value="0.108" />
+        <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/drawable/selector_btn_send.xml" value="0.1375" />
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/drawable/shape_btn_transparent.xml" value="0.164" />
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/drawable/shape_btn_white.xml" value="0.164" />
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/drawable/shape_color_pink.xml" value="0.164" />
@@ -33,6 +35,12 @@
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/layout/item_chat_list.xml" value="0.22" />
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/layout/item_like_me.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/Administrator/Desktop/ct/DatingApp/DatingApp/app/src/main/res/layout/item_matched_list.xml" value="0.25" />
+        <entry key="..\:/Users/Administrator/Desktop/dating_app_refactor/DatingApp/app/src/main/res/layout/activity_chat.xml" value="0.24895833333333334" />
+        <entry key="..\:/Users/Administrator/Desktop/dating_app_refactor/DatingApp/app/src/main/res/layout/activity_login.xml" value="0.19375" />
+        <entry key="..\:/Users/Administrator/Desktop/dating_app_refactor/DatingApp/app/src/main/res/layout/activity_main.xml" value="0.16394927536231885" />
+        <entry key="..\:/Users/Administrator/Desktop/dating_app_refactor/DatingApp/app/src/main/res/layout/activity_signup_and_login.xml" value="0.19375" />
+        <entry key="..\:/Users/Administrator/Desktop/dating_app_refactor/DatingApp/app/src/main/res/layout/fragment_chat_list.xml" value="0.24895833333333334" />
+        <entry key="..\:/Users/Administrator/Desktop/dating_app_refactor/DatingApp/app/src/main/res/menu/menu_bottom_navigation.xml" value="0.24895833333333334" />
         <entry key="app/src/main/res/drawable/background_btn_transparent.xml" value="0.1565" />
         <entry key="app/src/main/res/drawable/background_color_pink.xml" value="0.1565" />
         <entry key="app/src/main/res/drawable/btn_background_transparent.xml" value="0.1" />

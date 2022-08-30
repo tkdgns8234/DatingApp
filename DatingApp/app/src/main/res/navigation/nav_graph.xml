@@ -8,16 +8,17 @@
 
     <fragment
         android:id="@+id/likeFragment"
-        android:name="com.hoon.datingapp.ui.view.fragment.LikeFragment"
+        android:name="com.hoon.datingapp.presentation.view.like.LikeFragment"
         android:label="fragment_like"
         tools:layout="@layout/fragment_like" />
     <fragment
         android:id="@+id/matchedListFragment"
-        android:name="com.hoon.datingapp.ui.view.fragment.LikeMeListFragment"
+        android:name="com.hoon.datingapp.presentation.view.likemelist.LikeMeListFragment"
         android:label="fragment_matched_list"
         tools:layout="@layout/fragment_like_me_list" />
     <fragment
         android:id="@+id/chatListFragment"
-        android:name="com.hoon.datingapp.ui.view.fragment.ChatListFragment"
+        android:name="com.hoon.datingapp.presentation.view.chatlist.ChatListFragment"
+        tools:layout="@layout/fragment_chat_list"
         android:label="ChatListFragment" />
 </navigation>

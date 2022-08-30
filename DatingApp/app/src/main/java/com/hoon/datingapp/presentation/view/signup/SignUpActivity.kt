@@ -1,18 +1,23 @@
-package com.hoon.datingapp.ui.view
+package com.hoon.datingapp.presentation.view.signup
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.hoon.datingapp.R
 import com.hoon.datingapp.databinding.ActivitySignupAndLoginBinding
-import com.hoon.datingapp.util.DBKey
+import com.hoon.datingapp.presentation.view.main.MainActivity
 
-class SignUpAndLoginActivity : AppCompatActivity() {
+class SignUpActivity : AppCompatActivity() {
+
+    companion object {
+        fun newIntent(context: Context) =
+            Intent(context, SignUpActivity::class.java)
+    }
 
     private val binding by lazy {
         ActivitySignupAndLoginBinding.inflate(layoutInflater)
@@ -97,10 +102,11 @@ class SignUpAndLoginActivity : AppCompatActivity() {
             Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show()
             return
         }
-        val uid = auth.currentUser?.uid.orEmpty()
-        val currentUserDB =
-            Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.USERS).child(uid)
-        currentUserDB.child(DBKey.USER_ID).setValue(uid)
+//        val uid = auth.currentUser?.uid.orEmpty()
+//        val currentUserDB =
+//            Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.USERS).child(uid)
+//        currentUserDB.child(DBKey.USER_ID).setValue(uid)
+// TODO pref 에 로그인 id 추가하는 로직 추가
 
         Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
 

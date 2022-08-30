@@ -1,5 +1,6 @@
-package com.hoon.datingapp.ui.view
+package com.hoon.datingapp.presentation.view.profile
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,6 +9,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.hoon.datingapp.databinding.ActivityProfileBinding
+import com.hoon.datingapp.extensions.toast
+import com.hoon.datingapp.presentation.view.main.MainActivity
 import com.hoon.datingapp.util.Constants
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -18,6 +21,12 @@ https://github.com/CanHub/Android-Image-Cropper/issues/26
  */
 
 class ProfileActivity : AppCompatActivity() {
+
+    companion object {
+        fun newIntent(context: Context) =
+            Intent(context, ProfileActivity::class.java)
+    }
+
     private val binding by lazy {
         ActivityProfileBinding.inflate(layoutInflater)
     }
@@ -62,14 +71,11 @@ class ProfileActivity : AppCompatActivity() {
         val uri = imageURI?.toString()
 
         if (name.isNotEmpty() && uri != null) {
-            val intent = Intent(this, MainActivity::class.java).apply {
-                putExtra(Constants.INTENT_KEY_PROFILE_NAME, name)
-                putExtra(Constants.INTENT_KEY_PROFILE_IMAGE_URI, uri)
-            }
+            val intent = MainActivity.newIntent(this, name, uri)
             setResult(RESULT_OK, intent)
             finish()
         } else {
-            Toast.makeText(this, "이미지와 이름을 모두 입력해주세요", Toast.LENGTH_SHORT).show()
+            toast("이미지와 이름을 모두 입력해주세요")
         }
     }
 

@@ -1,4 +1,4 @@
-package com.hoon.datingapp.ui.view.fragment
+package com.hoon.datingapp.presentation.view.chatlist
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,12 +14,10 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.hoon.datingapp.R
 import com.hoon.datingapp.data.model.ChatRoom
-import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.FragmentChatListBinding
-import com.hoon.datingapp.ui.adapter.ChatListAdapter
-import com.hoon.datingapp.ui.adapter.LikeMeListAdapter
-import com.hoon.datingapp.ui.view.ChatActivity
-import com.hoon.datingapp.ui.view.LoginActivity
+import com.hoon.datingapp.presentation.adapter.ChatListAdapter
+import com.hoon.datingapp.presentation.view.chatlist.chat.ChatActivity
+import com.hoon.datingapp.presentation.view.login.LoginActivity
 import com.hoon.datingapp.util.Constants
 import com.hoon.datingapp.util.DBKey
 

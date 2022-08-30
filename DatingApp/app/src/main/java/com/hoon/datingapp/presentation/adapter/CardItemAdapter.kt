@@ -1,37 +1,33 @@
-package com.hoon.datingapp.ui.adapter
+package com.hoon.datingapp.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hoon.datingapp.data.model.UserProfile
-import com.hoon.datingapp.databinding.ItemLikeMeBinding
+import com.hoon.datingapp.databinding.ItemCardBinding
 
-class LikeMeListAdapter : ListAdapter<UserProfile, LikeMeListAdapter.ViewHolder>(diffUtil) {
-    inner class ViewHolder(private val binding: ItemLikeMeBinding) : RecyclerView.ViewHolder(binding.root) {
+class CardItemAdapter : ListAdapter<UserProfile, CardItemAdapter.CardViewHolder>(diffUtil) {
+    inner class CardViewHolder(val binding: ItemCardBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
         fun bind(userProfile: UserProfile) {
-
-            with(binding.imageView) {
-                Glide
-                    .with(binding.root)
-                    .load(userProfile.imageURI)
-                    .into(this)
-
-                this.clipToOutline = true
-            }
-
-            binding.tvName.text = userProfile.userName
+            Glide
+                .with(binding.root)
+                .load(userProfile.imageURI.toUri())
+                .into(binding.imageView)
         }
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): ViewHolder {
-        return ViewHolder(
-            ItemLikeMeBinding.inflate(
+    ): CardViewHolder {
+        return CardViewHolder(
+            ItemCardBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
@@ -39,14 +35,14 @@ class LikeMeListAdapter : ListAdapter<UserProfile, LikeMeListAdapter.ViewHolder>
         )
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         holder.bind(currentList[position])
     }
 
     companion object {
         private val diffUtil = object : DiffUtil.ItemCallback<UserProfile>() {
             override fun areItemsTheSame(oldItem: UserProfile, newItem: UserProfile): Boolean {
-                return oldItem.hashCode() == newItem.hashCode()
+                return oldItem.userID == newItem.userID
             }
 
             override fun areContentsTheSame(oldItem: UserProfile, newItem: UserProfile): Boolean {
@@ -55,5 +51,4 @@ class LikeMeListAdapter : ListAdapter<UserProfile, LikeMeListAdapter.ViewHolder>
 
         }
     }
-
 }
