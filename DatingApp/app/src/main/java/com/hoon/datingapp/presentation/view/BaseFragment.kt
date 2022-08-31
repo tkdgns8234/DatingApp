@@ -11,7 +11,7 @@ import kotlinx.coroutines.Job
 
 abstract class BaseFragment<VM: BaseViewModel, VB: ViewBinding> : Fragment() {
 
-    private var _binding: FragmentLikeBinding? = null // 메모리 leak 방지
+    private var _binding: VB? = null // 메모리 leak 방지
     protected val binding get() = _binding!! // null 체크 없이 binding 객체에 접근하기 위함
 
     abstract val viewModel: VM
@@ -23,7 +23,7 @@ abstract class BaseFragment<VM: BaseViewModel, VB: ViewBinding> : Fragment() {
     abstract fun observeData()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val binding = getViewBinding()
+        _binding = getViewBinding()
         return binding.root
     }
 

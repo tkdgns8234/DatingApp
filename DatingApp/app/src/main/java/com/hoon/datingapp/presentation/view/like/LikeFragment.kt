@@ -16,13 +16,13 @@ import com.hoon.datingapp.presentation.adapter.CardItemAdapter
 import com.hoon.datingapp.R
 import com.hoon.datingapp.data.model.ChatRoom
 import com.hoon.datingapp.databinding.FragmentLikeBinding
+import com.hoon.datingapp.extensions.toast
 import com.hoon.datingapp.presentation.view.login.LoginActivity
-import com.hoon.datingapp.util.DBKey
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager
 import com.yuyakaido.android.cardstackview.Direction
 import com.yuyakaido.android.cardstackview.StackFrom
 
-class LikeFragment : Fragment() {
+internal class LikeFragment : Fragment() {
     private var _binding: FragmentLikeBinding? = null // 메모리 leak 방지
     private val binding get() = _binding!! // null 체크 없이 binding 객체에 접근하기 위함
 
@@ -188,17 +188,12 @@ class LikeFragment : Fragment() {
 
 
     private fun getCurrentUserId(): String {
-        if (auth.currentUser == null) {
-            Toast.makeText(context, getString(R.string.status_not_login), Toast.LENGTH_SHORT).show()
+        val uid = viewModel.getCurrentUserID()
 
-            startActivity(
-                Intent(context, LoginActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            )
+        if (uid == null) {
+            toast(getString(R.string.status_not_login))
+            startActivity(LoginActivity.newIntent(this))
         }
-
-        return auth.currentUser!!.uid
+        return uid!!
     }
-
-
 }

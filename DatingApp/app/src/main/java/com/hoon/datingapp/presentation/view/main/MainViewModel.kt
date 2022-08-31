@@ -99,19 +99,8 @@ internal class MainViewModel(
         return profile
     }
 
-
-//    fun putCurrentUserID(userID: String?) {
-//        userID?.let {
-//            preferenceManager.putCurrentUserID(userID)
-//            setState(LoginState.Success)
-//        } ?: kotlin.run {
-//            setState(LoginState.Error)
-//        }
-//
-//    }
-
-    fun getCurrentUserID() {
-
+    fun getCurrentUserID(): String? {
+        return preferenceManager.getCurrentUserID()
     }
 
     private fun setState(state: MainState) {

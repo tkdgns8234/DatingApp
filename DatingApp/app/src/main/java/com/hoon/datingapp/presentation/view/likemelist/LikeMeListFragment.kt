@@ -16,6 +16,7 @@ import com.hoon.datingapp.presentation.adapter.LikeMeListAdapter
 import com.hoon.datingapp.R
 import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.FragmentLikeMeListBinding
+import com.hoon.datingapp.extensions.toast
 import com.hoon.datingapp.presentation.view.login.LoginActivity
 import com.hoon.datingapp.util.DBKey
 
@@ -93,17 +94,13 @@ class LikeMeListFragment : Fragment() {
         })
     }
 
-
     private fun getCurrentUserId(): String {
-        if (auth.currentUser == null) {
-            Toast.makeText(context, getString(R.string.status_not_login), Toast.LENGTH_SHORT).show()
+        val uid = viewModel.getCurrentUserID()
 
-            startActivity(
-                Intent(context, LoginActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            )
+        if (uid == null) {
+            toast(getString(R.string.status_not_login))
+            startActivity(LoginActivity.newIntent(this))
         }
-
-        return auth.currentUser!!.uid
+        return uid!!
     }
 }

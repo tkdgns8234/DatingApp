@@ -1,14 +1,14 @@
 package com.hoon.datingapp.presentation.view.chat
 
+import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.presentation.view.login.LoginState
 
 sealed class ChatState {
 
-    object Uninitialized : ChatState()
+    object UnInitialized : ChatState()
 
     sealed class Success : ChatState() {
-        object SendMessage : Success()
-        object GetPartnerImageUri: Success()
+        data class UpdatePartnerUserProfile(val profile: UserProfile) : Success()
     }
 
     data class Error(

@@ -2,26 +2,21 @@ package com.hoon.datingapp.presentation.view.chat
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.hoon.datingapp.R
 import com.hoon.datingapp.data.model.Message
 import com.hoon.datingapp.databinding.ActivityChatBinding
+import com.hoon.datingapp.extensions.toast
 import com.hoon.datingapp.presentation.adapter.ChatAdapter
+import com.hoon.datingapp.presentation.view.BaseActivity
 import com.hoon.datingapp.presentation.view.login.LoginActivity
-import com.hoon.datingapp.util.Constants
-import com.hoon.datingapp.util.DBKey
+import org.koin.android.viewmodel.ext.android.viewModel
 
-class ChatActivity : AppCompatActivity() {
+internal class ChatActivity : BaseActivity<ChatViewModel, ActivityChatBinding>() {
 
     companion object {
         const val INTENT_KEY_CHAT_KEY = "chat_key"
@@ -34,99 +29,98 @@ class ChatActivity : AppCompatActivity() {
             }
     }
 
-    private val binding by lazy {
+    override fun getViewBinding() =
         ActivityChatBinding.inflate(layoutInflater)
-    }
 
-    private val auth = FirebaseAuth.getInstance()
+    override val viewModel by viewModel<ChatViewModel>()
+
     private val messageList = mutableListOf<Message>()
     private val adapter = ChatAdapter(getCurrentUserId())
     private lateinit var chatDB: DatabaseReference
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
-
-        initViews()
-        getPartnerImage()
-        getChatHistory()
-    }
-
-    private fun getChatHistory() {
-        val chatKey = intent.getStringExtra(INTENT_KEY_CHAT_KEY) ?: ""
-        chatDB = Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.CHATS).child(chatKey)
-        chatDB.addChildEventListener(object : ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                val message = snapshot.getValue(Message::class.java)
-                message ?: return
-
-                messageList.add(message)
-                adapter.submitList(messageList.toMutableList())
-                binding.rvChat.scrollToPosition(adapter.itemCount - 1)
+    override fun observeData() {
+        viewModel.chatStateLiveData.observe(this) {
+            when (it) {
+                is ChatState.UnInitialized -> {
+                    initViews()
+                    updatePartnerUserProfile()
+                    traceChatHistory()
+                }
+                is ChatState.Success -> {
+                    handleSuccessState(it)
+                }
+                is ChatState.Error -> {
+                    handleErrorState(it.message)
+                }
             }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-            override fun onCancelled(error: DatabaseError) {}
-        })
+        }
     }
 
-    private fun initViews() {
-        binding.rvChat.adapter = adapter
-        binding.rvChat.layoutManager = LinearLayoutManager(this)
+    private fun handleErrorState(message: String) {
+        toast(message)
+        finish()
+    }
 
-        binding.btnBack.setOnClickListener { finish() }
+    private fun handleSuccessState(state: ChatState.Success) {
+        when (state) {
+            is ChatState.Success.UpdatePartnerUserProfile -> {
+                setPartnerUserImage(state.profile.imageURI)
+            }
+        }
+    }
 
-        binding.etChat.addTextChangedListener {
-            binding.btnSend.isEnabled = !binding.etChat.text.isNullOrEmpty()
+    private fun setPartnerUserImage(imageUri: String) {
+        Glide
+            .with(this@ChatActivity)
+            .load(imageUri)
+            .into(binding.imageView)
+        binding.imageView.clipToOutline = true
+    }
+
+    private fun initViews() = with(binding) {
+        rvChat.adapter = adapter
+        rvChat.layoutManager = LinearLayoutManager(this@ChatActivity)
+
+        btnBack.setOnClickListener { finish() }
+
+        etChat.addTextChangedListener {
+            btnSend.isEnabled = !binding.etChat.text.isNullOrEmpty()
         }
 
-        binding.btnSend.isEnabled = false
-        binding.btnSend.setOnClickListener {
-            val message = Message(
-                getCurrentUserId(),
-                binding.etChat.text.toString(),
-                System.currentTimeMillis()
-            )
-            chatDB.push().setValue(message)
+        btnSend.isEnabled = false
+        btnSend.setOnClickListener {
+            val chatKey = intent.getStringExtra(INTENT_KEY_CHAT_KEY) ?: ""
+            val text = etChat.text.toString()
+            viewModel.sendMessage(chatKey, text)
 
-            binding.etChat.text?.clear()
+            etChat.text?.clear()
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(binding.etChat.windowToken, 0)
+            inputMethodManager.hideSoftInputFromWindow(etChat.windowToken, 0)
         }
     }
 
-    private fun getPartnerImage() {
+    private fun traceChatHistory() {
+        val chatKey = intent.getStringExtra(INTENT_KEY_CHAT_KEY) ?: ""
+
+        viewModel.traceChatHistory(chatKey) { message ->
+            messageList.add(message)
+            adapter.submitList(messageList.toMutableList())
+            binding.rvChat.scrollToPosition(adapter.itemCount - 1)
+        }
+    }
+
+    private fun updatePartnerUserProfile() {
         val partnerID = intent.getStringExtra(INTENT_KEY_PARTNER_ID) ?: ""
-
-        val partnerDB =
-            Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.USERS).child(partnerID)
-        partnerDB.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val imageURI = snapshot.child(DBKey.USER_IMAGE_URI).value.toString()
-
-                Glide
-                    .with(this@ChatActivity)
-                    .load(imageURI)
-                    .into(binding.imageView)
-                binding.imageView.clipToOutline = true
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
+        viewModel.getPartnerUserProfile(partnerID)
     }
 
     private fun getCurrentUserId(): String {
-        if (auth.currentUser == null) {
-            Toast.makeText(this, getString(R.string.status_not_login), Toast.LENGTH_SHORT).show()
+        val uid = viewModel.getCurrentUserID()
 
-            startActivity(
-                Intent(this, LoginActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            )
+        if (uid == null) {
+            toast(getString(R.string.status_not_login))
+            startActivity(LoginActivity.newIntent(this))
         }
-
-        return auth.currentUser!!.uid
+        return uid!!
     }
 }

@@ -1,17 +1,15 @@
 package com.hoon.datingapp.data.db
 
 import android.net.Uri
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.hoon.datingapp.data.db.DBKey.CHATS_KEY
 import com.hoon.datingapp.data.db.DBKey.DB_NAME
 import com.hoon.datingapp.data.db.DBKey.USERS_KEY
+import com.hoon.datingapp.data.model.ChatRoom
+import com.hoon.datingapp.data.model.Message
 import com.hoon.datingapp.data.model.UserProfile
-import com.hoon.datingapp.util.DBKey
 import com.hoon.datingapp.util.DatabaseResponse
 import kotlinx.coroutines.CompletableDeferred
 
@@ -63,8 +61,52 @@ class FirebaseRealtimeDB {
         return retVal.await()
     }
 
-    internal suspend fun updateUserProfile(uid: String, name: String, imageUri: Uri) {
+    internal fun updateUserProfile(uid: String, name: String, imageUri: Uri) {
         val userProfile = UserProfile(uid, name, imageUri.toString())
         usersDB.child(uid).setValue(userProfile)
+    }
+
+    internal fun sendMessage(chatKey: String, message: String) {
+        chatsDB.child(chatKey).push().setValue(message)
+    }
+
+    internal suspend fun getMatchedUsers(uid: String): DatabaseResponse {
+        var retVal = CompletableDeferred<DatabaseResponse>()
+        val chatList = mutableListOf<ChatRoom>()
+        val userList = usersDB.child(uid).child(DBKey.CHAT)
+
+        userList.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                snapshot.children.forEach {
+                    val chat = it.getValue(ChatRoom::class.java)
+                    chat ?: return
+
+                    chatList.add(chat)
+                }
+                retVal.complete(DatabaseResponse.Success(userList))
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                retVal.complete(DatabaseResponse.Failed)
+            }
+        })
+
+        return retVal.await()
+    }
+
+
+    internal fun traceChatHistory(chatKey: String, callback: (message: Message) -> Unit) {
+        chatsDB.child(chatKey).addChildEventListener(object : ChildEventListener {
+            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                val message = snapshot.getValue(Message::class.java)
+                message ?: return
+                callback(message)
+            }
+
+            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+            override fun onCancelled(error: DatabaseError) {}
+        })
     }
 }

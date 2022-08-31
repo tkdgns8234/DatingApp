@@ -82,14 +82,12 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
-import com.google.firebase.auth.FirebaseAuth
 import com.hoon.datingapp.R
 import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.ActivityMainBinding
@@ -226,17 +224,13 @@ internal class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>()
     }
 
     private fun getCurrentUserId(): String {
-        val auth = FirebaseAuth.getInstance()
+        val uid = viewModel.getCurrentUserID()
 
-        if (auth.currentUser == null) {
-            Toast.makeText(this, getString(R.string.status_not_login), Toast.LENGTH_SHORT).show()
-
-            startActivity(
-                Intent(this, LoginActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            )
+        if (uid == null) {
+            toast(getString(R.string.status_not_login))
+            startActivity(LoginActivity.newIntent(this))
         }
-        return auth.currentUser!!.uid
+        return uid!!
     }
 
 }
