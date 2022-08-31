@@ -12,6 +12,7 @@ import com.hoon.datingapp.domain.UploadPhotoUseCase
 import com.hoon.datingapp.domain.UpdateUserProfileUseCase
 import com.hoon.datingapp.presentation.view.login.LoginViewModel
 import com.hoon.datingapp.presentation.view.main.MainViewModel
+import com.hoon.datingapp.presentation.view.signup.SignUpViewModel
 import kotlinx.coroutines.Dispatchers
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.viewmodel.dsl.viewModel
@@ -24,6 +25,7 @@ internal val appModule = module {
     // viewmodel
     viewModel { LoginViewModel(get()) }
     viewModel { MainViewModel(get(), get(), get(), get(), get()) }
+    viewModel { SignUpViewModel(get()) }
 
     // domain
     single { CheckIsNewProfileUseCase(get()) }

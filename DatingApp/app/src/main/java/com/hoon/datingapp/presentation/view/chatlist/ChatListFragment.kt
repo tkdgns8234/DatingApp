@@ -16,7 +16,7 @@ import com.hoon.datingapp.R
 import com.hoon.datingapp.data.model.ChatRoom
 import com.hoon.datingapp.databinding.FragmentChatListBinding
 import com.hoon.datingapp.presentation.adapter.ChatListAdapter
-import com.hoon.datingapp.presentation.view.chatlist.chat.ChatActivity
+import com.hoon.datingapp.presentation.view.chat.ChatActivity
 import com.hoon.datingapp.presentation.view.login.LoginActivity
 import com.hoon.datingapp.util.Constants
 import com.hoon.datingapp.util.DBKey
@@ -66,9 +66,8 @@ class ChatListFragment : Fragment() {
 
     private fun initViews() {
         adapter.setOnClickListener { partnerID, chatKey ->
-            val intent = Intent(context, ChatActivity::class.java)
-            intent.putExtra(Constants.INTENT_KEY_CHAT_KEY, chatKey)
-            intent.putExtra(Constants.INTENT_KEY_PARTNER_ID, partnerID)
+            val intent =
+                ChatActivity.newIntent(requireContext(), chatKey = chatKey, partnerID = partnerID)
             startActivity(intent)
         }
         binding.rvChatList.adapter = adapter

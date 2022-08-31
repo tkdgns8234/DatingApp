@@ -13,6 +13,7 @@ import com.hoon.datingapp.domain.GetUserProfileUseCase
 import com.hoon.datingapp.domain.UpdateUserProfileUseCase
 import com.hoon.datingapp.domain.UploadPhotoUseCase
 import com.hoon.datingapp.presentation.view.BaseViewModel
+import com.hoon.datingapp.presentation.view.login.LoginState
 import com.hoon.datingapp.util.DatabaseResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -62,7 +63,7 @@ internal class MainViewModel(
                 handleResult(isNewProfile, uid)
             }
             is DatabaseResponse.Failed -> {
-                setState(MainState.Error("로그인에 실패하였습니다."))
+                setState(MainState.Error(ERROR_MESSAGE_LOGIN_FAILED))
             }
         }
     }
@@ -90,7 +91,7 @@ internal class MainViewModel(
                     profile = dbResponse.result as? UserProfile
                 }
                 is DatabaseResponse.Failed -> {
-                    setState(MainState.Error("프로필 정보를 불러오는데 실패하였습니다."))
+                    setState(MainState.Error(ERROR_MESSAGE_LOAD_PROFILE_FAILED))
                 }
             }
         }.join()
@@ -98,8 +99,27 @@ internal class MainViewModel(
         return profile
     }
 
+
+//    fun putCurrentUserID(userID: String?) {
+//        userID?.let {
+//            preferenceManager.putCurrentUserID(userID)
+//            setState(LoginState.Success)
+//        } ?: kotlin.run {
+//            setState(LoginState.Error)
+//        }
+//
+//    }
+
+    fun getCurrentUserID() {
+
+    }
+
     private fun setState(state: MainState) {
         _mainStateLiveData.postValue(state)
     }
 
+    companion object {
+        const val ERROR_MESSAGE_LOAD_PROFILE_FAILED = "프로필 정보를 불러오는데 실패하였습니다."
+        const val ERROR_MESSAGE_LOGIN_FAILED = "로그인에 실패하였습니다."
+    }
 }

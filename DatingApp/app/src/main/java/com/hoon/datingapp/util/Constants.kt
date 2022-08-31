@@ -22,7 +22,5 @@ class Constants {
         const val FACEBOOK_INFO_EMAIL = "email"
         const val FACEBOOK_INFO_PUBLIC_PROFILE = "public_profile"
 
-        const val INTENT_KEY_CHAT_KEY = "chat_key"
-        const val INTENT_KEY_PARTNER_ID = "partner_id"
     }
 }

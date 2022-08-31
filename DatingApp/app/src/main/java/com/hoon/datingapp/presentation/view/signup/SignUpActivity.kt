@@ -2,34 +2,54 @@ package com.hoon.datingapp.presentation.view.signup
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.hoon.datingapp.R
 import com.hoon.datingapp.databinding.ActivitySignupAndLoginBinding
+import com.hoon.datingapp.extensions.toast
+import com.hoon.datingapp.presentation.view.BaseActivity
 import com.hoon.datingapp.presentation.view.main.MainActivity
+import org.koin.android.viewmodel.ext.android.viewModel
 
-class SignUpActivity : AppCompatActivity() {
+class SignUpActivity : BaseActivity<SignUpViewModel, ActivitySignupAndLoginBinding>() {
 
     companion object {
         fun newIntent(context: Context) =
             Intent(context, SignUpActivity::class.java)
     }
 
-    private val binding by lazy {
-        ActivitySignupAndLoginBinding.inflate(layoutInflater)
+    override fun getViewBinding(): ActivitySignupAndLoginBinding {
+        return ActivitySignupAndLoginBinding.inflate(layoutInflater)
     }
 
-    val auth = Firebase.auth
+    override val viewModel by viewModel<SignUpViewModel>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+    override fun observeData() {
+        viewModel.signUpStateLiveData.observe(this) {
+            when (it) {
+                is SignUpState.Uninitialized -> {
+                    initViews()
+                }
+                is SignUpState.Success -> {
+                    handleSuccessState(it)
+                }
+                is SignUpState.Error -> {
+                    toast(it.message)
+                }
+            }
+        }
+    }
 
-        initViews()
+    private fun handleSuccessState(state: SignUpState.Success) {
+        when(state) {
+            is SignUpState.Success.SignUp-> {
+                toast(getString(R.string.signup_success_click_login_button),)
+            }
+            is SignUpState.Success.Login -> {
+                viewModel.putCurrentUserID()
+                toast(getString(R.string.login_success))
+                startActivity(MainActivity.newIntent(this))
+            }
+        }
     }
 
     private fun initViews() {
@@ -66,14 +86,7 @@ class SignUpActivity : AppCompatActivity() {
             val email = binding.etEmail.text.toString()
             val pw = binding.etPassword.text.toString()
 
-            auth.signInWithEmailAndPassword(email, pw).addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    handleLoginResult()
-                } else {
-                    Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
+            viewModel.login(email, pw)
         }
     }
 
@@ -83,36 +96,7 @@ class SignUpActivity : AppCompatActivity() {
             val email = binding.etEmail.text.toString()
             val pw = binding.etPassword.text.toString()
 
-            auth.createUserWithEmailAndPassword(email, pw).addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(
-                        this,
-                        getString(R.string.signup_success_click_login_button),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    Toast.makeText(this, getString(R.string.signup_failed), Toast.LENGTH_SHORT).show()
-                }
-            }
+            viewModel.signUp(email, pw)
         }
-    }
-
-    private fun handleLoginResult() {
-        if (auth.currentUser == null) {
-            Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show()
-            return
-        }
-//        val uid = auth.currentUser?.uid.orEmpty()
-//        val currentUserDB =
-//            Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.USERS).child(uid)
-//        currentUserDB.child(DBKey.USER_ID).setValue(uid)
-// TODO pref 에 로그인 id 추가하는 로직 추가
-
-        Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
-
-        startActivity(
-            Intent(this, MainActivity::class.java)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        )
     }
 }

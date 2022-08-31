@@ -1,5 +1,6 @@
-package com.hoon.datingapp.presentation.view.chatlist.chat
+package com.hoon.datingapp.presentation.view.chat
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
@@ -21,6 +22,18 @@ import com.hoon.datingapp.util.Constants
 import com.hoon.datingapp.util.DBKey
 
 class ChatActivity : AppCompatActivity() {
+
+    companion object {
+        const val INTENT_KEY_CHAT_KEY = "chat_key"
+        const val INTENT_KEY_PARTNER_ID = "partner_id"
+
+        fun newIntent(context: Context, chatKey: String, partnerID: String) =
+            Intent(context, ChatActivity::class.java).apply {
+                putExtra(INTENT_KEY_CHAT_KEY, chatKey)
+                putExtra(INTENT_KEY_PARTNER_ID, partnerID)
+            }
+    }
+
     private val binding by lazy {
         ActivityChatBinding.inflate(layoutInflater)
     }
@@ -40,7 +53,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun getChatHistory() {
-        val chatKey = intent.getStringExtra(Constants.INTENT_KEY_CHAT_KEY) ?: ""
+        val chatKey = intent.getStringExtra(INTENT_KEY_CHAT_KEY) ?: ""
         chatDB = Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.CHATS).child(chatKey)
         chatDB.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
@@ -49,7 +62,7 @@ class ChatActivity : AppCompatActivity() {
 
                 messageList.add(message)
                 adapter.submitList(messageList.toMutableList())
-                binding.rvChat.scrollToPosition(adapter.itemCount-1)
+                binding.rvChat.scrollToPosition(adapter.itemCount - 1)
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -85,7 +98,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun getPartnerImage() {
-        val partnerID = intent.getStringExtra(Constants.INTENT_KEY_PARTNER_ID) ?: ""
+        val partnerID = intent.getStringExtra(INTENT_KEY_PARTNER_ID) ?: ""
 
         val partnerDB =
             Firebase.database.reference.child(DBKey.DB_NAME).child(DBKey.USERS).child(partnerID)

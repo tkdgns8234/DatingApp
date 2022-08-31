@@ -19,7 +19,7 @@
         android:name=".DatingAppApplication">
 
         <activity
-            android:name=".presentation.view.chatlist.chat.ChatActivity"
+            android:name=".presentation.view.chat.ChatActivity"
             android:exported="false" />
         <activity
             android:name=".presentation.view.profile.ProfileActivity"
