@@ -1,7 +1,7 @@
 package com.hoon.datingapp.presentation.view.main
 
-import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -13,7 +13,6 @@ import com.hoon.datingapp.domain.GetUserProfileUseCase
 import com.hoon.datingapp.domain.UpdateUserProfileUseCase
 import com.hoon.datingapp.domain.UploadPhotoUseCase
 import com.hoon.datingapp.presentation.view.BaseViewModel
-import com.hoon.datingapp.presentation.view.login.LoginState
 import com.hoon.datingapp.util.DatabaseResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -29,7 +28,7 @@ internal class MainViewModel(
     private var _mainStateLiveData = MutableLiveData<MainState>(MainState.UnInitialized)
     val mainStateLiveData: LiveData<MainState> = _mainStateLiveData
 
-    override fun fetchData(): Job = viewModelScope.launch {
+    fun fetchData(): Job = viewModelScope.launch {
         setState(MainState.Loading)
 
         preferenceManager.getCurrentUserID()?.let {
@@ -104,7 +103,7 @@ internal class MainViewModel(
     }
 
     private fun setState(state: MainState) {
-        _mainStateLiveData.postValue(state)
+        _mainStateLiveData.value = state
     }
 
     companion object {

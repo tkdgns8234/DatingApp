@@ -35,8 +35,7 @@ internal class ChatActivity : BaseActivity<ChatViewModel, ActivityChatBinding>()
     override val viewModel by viewModel<ChatViewModel>()
 
     private val messageList = mutableListOf<Message>()
-    private val adapter = ChatAdapter(getCurrentUserId())
-    private lateinit var chatDB: DatabaseReference
+    private val adapter by lazy { ChatAdapter(getCurrentUserId()) }
 
     override fun observeData() {
         viewModel.chatStateLiveData.observe(this) {
@@ -48,6 +47,10 @@ internal class ChatActivity : BaseActivity<ChatViewModel, ActivityChatBinding>()
                 }
                 is ChatState.Success -> {
                     handleSuccessState(it)
+                }
+                is ChatState.Logout -> {
+                    toast(getString(R.string.status_not_login))
+                    startActivity(LoginActivity.newIntent(this))
                 }
                 is ChatState.Error -> {
                     handleErrorState(it.message)

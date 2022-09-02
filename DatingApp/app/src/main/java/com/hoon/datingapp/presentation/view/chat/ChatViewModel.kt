@@ -24,9 +24,6 @@ internal class ChatViewModel(
     private var _chatStateLiveData = MutableLiveData<ChatState>(ChatState.UnInitialized)
     val chatStateLiveData: LiveData<ChatState> = _chatStateLiveData
 
-    override fun fetchData(): Job = viewModelScope.launch {
-    }
-
     fun getPartnerUserProfile(uid: String) = viewModelScope.launch {
         val dbResponse = getUserProfileUseCase(uid)
         when (dbResponse) {
@@ -53,17 +50,19 @@ internal class ChatViewModel(
         val uid = getCurrentUserID()
 
         uid?.let {
-            Message(uid, msg, System.currentTimeMillis())
-            sendMessageUseCase(chatKey = chatKey, message = msg)
+            val message = Message(uid, msg, System.currentTimeMillis())
+            sendMessageUseCase(chatKey = chatKey, message = message)
+        } ?: kotlin.run {
+            setState(ChatState.Logout)
         }
-    }
-
-    private fun setState(state: ChatState) {
-        _chatStateLiveData.postValue(state)
     }
 
     fun getCurrentUserID(): String? {
         return preferenceManager.getCurrentUserID()
+    }
+
+    private fun setState(state: ChatState) {
+        _chatStateLiveData.value = state
     }
 
     companion object {

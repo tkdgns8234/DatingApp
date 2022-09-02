@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.hoon.datingapp.data.model.ChatRoom
+import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.data.preference.PreferenceManager
 import com.hoon.datingapp.domain.GetMatchedUsersUseCase
+import com.hoon.datingapp.domain.GetUserProfileUseCase
 import com.hoon.datingapp.presentation.view.BaseViewModel
 import com.hoon.datingapp.presentation.view.main.MainState
 import com.hoon.datingapp.presentation.view.main.MainViewModel
@@ -15,6 +17,7 @@ import kotlinx.coroutines.launch
 
 internal class ChatListViewModel(
     private val preferenceManager: PreferenceManager,
+    private val getUserProfileUseCase: GetUserProfileUseCase,
     private val getMatchedUsersUseCase: GetMatchedUsersUseCase
 ) : BaseViewModel() {
 
@@ -22,7 +25,7 @@ internal class ChatListViewModel(
         MutableLiveData<ChatListState>(ChatListState.UnInitialized)
     val chatListStatusLiveData: LiveData<ChatListState> = _chatListStatusLiveData
 
-    override fun fetchData(): Job = viewModelScope.launch {
+    fun fetchData(): Job = viewModelScope.launch {
         getMatchedUsers()
     }
 
@@ -42,19 +45,35 @@ internal class ChatListViewModel(
                 }
             }
         } ?: kotlin.run {
-            setState(ChatListState.Error(ERROR_MESSAGE_GET_MATCHED_USERS_FAILED))
+            setState(ChatListState.Logout)
         }
     }
+
+    fun getUserProfile(uid: String, completeHandler: (name: String, imageURI: String) -> Unit) =
+        viewModelScope.launch {
+            val dbResponse = getUserProfileUseCase(uid)
+            when (dbResponse) {
+                is DatabaseResponse.Success<*> -> {
+                    val profile = dbResponse.result as? UserProfile ?: UserProfile()
+
+                    completeHandler(profile.userName, profile.imageURI)
+                }
+                is DatabaseResponse.Failed -> {
+                    setState(ChatListState.Error(ERROR_MESSAGE_LOAD_PROFILE_FAILED))
+                }
+            }
+        }
 
     fun getCurrentUserID(): String? {
         return preferenceManager.getCurrentUserID()
     }
 
     private fun setState(state: ChatListState) {
-        _chatListStatusLiveData.postValue(state)
+        _chatListStatusLiveData.value = state
     }
 
     companion object {
+        const val ERROR_MESSAGE_LOAD_PROFILE_FAILED = "프로필 정보를 불러오는데 실패하였습니다."
         const val ERROR_MESSAGE_GET_MATCHED_USERS_FAILED = "매칭된 유저 탐색에 실패하였습니다."
     }
 }

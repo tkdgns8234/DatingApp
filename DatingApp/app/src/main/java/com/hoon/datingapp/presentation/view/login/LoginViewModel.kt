@@ -15,12 +15,6 @@ internal class LoginViewModel(
     private var _loginStatusLiveData = MutableLiveData<LoginState>(LoginState.Uninitialized)
     val loginStatusLiveData: LiveData<LoginState> = _loginStatusLiveData
 
-    override fun fetchData(): Job = viewModelScope.launch {
-        preferenceManager.getCurrentUserID()?.let {
-            setState(LoginState.Success)
-        }
-    }
-
     fun putCurrentUserID(userID: String?) {
         userID?.let {
             preferenceManager.putCurrentUserID(userID)
@@ -32,7 +26,6 @@ internal class LoginViewModel(
     }
 
     private fun setState(state: LoginState) {
-        _loginStatusLiveData.postValue(state)
-        // postValue -> 비동기
+        _loginStatusLiveData.value = state
     }
 }

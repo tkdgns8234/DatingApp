@@ -7,6 +7,8 @@ sealed class ChatState {
 
     object UnInitialized : ChatState()
 
+    object Logout : ChatState()
+
     sealed class Success : ChatState() {
         data class UpdatePartnerUserProfile(val profile: UserProfile) : Success()
     }

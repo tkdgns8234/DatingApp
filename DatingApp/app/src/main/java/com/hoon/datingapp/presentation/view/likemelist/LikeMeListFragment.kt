@@ -1,106 +1,51 @@
 package com.hoon.datingapp.presentation.view.likemelist
 
-import android.content.Intent
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.hoon.datingapp.presentation.adapter.LikeMeListAdapter
 import com.hoon.datingapp.R
+import com.hoon.datingapp.presentation.adapter.LikeMeListAdapter
 import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.FragmentLikeMeListBinding
 import com.hoon.datingapp.extensions.toast
+import com.hoon.datingapp.presentation.view.BaseFragment
 import com.hoon.datingapp.presentation.view.login.LoginActivity
-import com.hoon.datingapp.util.DBKey
+import org.koin.android.viewmodel.ext.android.viewModel
 
-class LikeMeListFragment : Fragment() {
-    private var _binding: FragmentLikeMeListBinding? = null
-    private val binding get() = _binding!!
+internal class LikeMeListFragment : BaseFragment<LikeMeListViewModel, FragmentLikeMeListBinding>() {
 
-    private val auth = FirebaseAuth.getInstance()
-    private lateinit var usersDB: DatabaseReference
+    override fun getViewBinding() =
+        FragmentLikeMeListBinding.inflate(layoutInflater)
+
+    override val viewModel by viewModel<LikeMeListViewModel>()
+
     private val adapter = LikeMeListAdapter()
     private val userProfiles = mutableListOf<UserProfile>()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentLikeMeListBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        usersDB = Firebase.database.reference.child(DBKey.DB_NAME)
-            .child(DBKey.USERS)
-
-        initViews()
-        getUsersLikeMe()
-    }
-
-    override fun onDestroyView() {
-        _binding = null
-        super.onDestroyView()
-    }
-
-    private fun initViews() {
-        binding.rvLikeMeList.adapter = adapter
-        binding.rvLikeMeList.layoutManager = LinearLayoutManager(context)
-    }
-
-    private fun getUsersLikeMe() {
-        val likedDB = usersDB.child(getCurrentUserId()).child(DBKey.LIKED_BY).child(DBKey.LIKE)
-        likedDB.addChildEventListener(object :ChildEventListener {
-            override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                // 매칭된 uid가 null이 아닌경우
-                if (!snapshot.key.isNullOrEmpty()) {
-                    getUserLikeMe(snapshot.key.orEmpty())
+    override fun observeData() {
+        viewModel.likeMeListStatusLiveData.observe(this) {
+            when (it) {
+                is LikeMeListState.UnInitialized -> {
+                    initViews()
+                    viewModel.fetchData()
                 }
+                is LikeMeListState.UpdateUserLikeMe -> {
+                    handleUpdateUserLikeMe(it.profile)
+                }
+                is LikeMeListState.Logout -> {
+                    toast(getString(R.string.status_not_login))
+                    startActivity(LoginActivity.newIntent(requireContext()))
+                }
+                is LikeMeListState.Error -> {}
             }
-
-            override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-
-            override fun onChildRemoved(snapshot: DataSnapshot) {}
-
-            override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-
-            override fun onCancelled(error: DatabaseError) {}
-
-        })
-    }
-
-    private fun getUserLikeMe(uid: String) {
-        val likedUserDB = usersDB.child(uid)
-        likedUserDB.addListenerForSingleValueEvent(object :ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val likedUserProfile = snapshot.getValue(UserProfile::class.java)
-                likedUserProfile ?: return
-
-                userProfiles.add(likedUserProfile)
-                adapter.submitList(userProfiles.toMutableList())
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    private fun getCurrentUserId(): String {
-        val uid = viewModel.getCurrentUserID()
-
-        if (uid == null) {
-            toast(getString(R.string.status_not_login))
-            startActivity(LoginActivity.newIntent(this))
         }
-        return uid!!
+    }
+
+    private fun handleUpdateUserLikeMe(profile: UserProfile) {
+        userProfiles.add(profile)
+        adapter.submitList(userProfiles.toMutableList())
+    }
+
+    private fun initViews() = with(binding) {
+        rvLikeMeList.adapter = adapter
+        rvLikeMeList.layoutManager = LinearLayoutManager(context)
     }
 }

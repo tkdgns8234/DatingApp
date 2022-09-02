@@ -23,6 +23,10 @@ import org.koin.android.viewmodel.ext.android.viewModel
 internal class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {
 
     companion object {
+
+        const val FACEBOOK_REQUEST_INFO_EMAIL = "email"
+        const val FACEBOOK_REQUEST_INFO_PUBLIC_PROFILE = "public_profile"
+
         fun newIntent(context: Context) =
             Intent(context, LoginActivity::class.java).apply {
                 addFlags(
@@ -70,7 +74,7 @@ internal class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding
         loginManager.logInWithReadPermissions(
             this,
             callbackManager,
-            mutableListOf(Constants.FACEBOOK_INFO_EMAIL, Constants.FACEBOOK_INFO_PUBLIC_PROFILE)
+            mutableListOf(FACEBOOK_REQUEST_INFO_EMAIL, FACEBOOK_REQUEST_INFO_PUBLIC_PROFILE)
         )
 
         loginManager.registerCallback(

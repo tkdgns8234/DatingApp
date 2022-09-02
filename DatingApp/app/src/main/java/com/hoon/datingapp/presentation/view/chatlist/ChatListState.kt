@@ -6,6 +6,8 @@ sealed class ChatListState {
 
     object UnInitialized : ChatListState()
 
+    object Logout: ChatListState()
+
     data class GetMatchedUsers(
         val chatList: List<ChatRoom>
     ): ChatListState()

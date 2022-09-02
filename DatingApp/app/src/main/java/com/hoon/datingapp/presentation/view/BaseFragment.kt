@@ -16,8 +16,6 @@ abstract class BaseFragment<VM: BaseViewModel, VB: ViewBinding> : Fragment() {
 
     abstract val viewModel: VM
 
-    lateinit var job: Job
-
     abstract fun getViewBinding(): VB
 
     abstract fun observeData()
@@ -29,15 +27,11 @@ abstract class BaseFragment<VM: BaseViewModel, VB: ViewBinding> : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        job = viewModel.fetchData()
         observeData()
     }
 
     override fun onDestroyView() {
         _binding = null
-        if (job.isActive) { // fetchData 함수에서 viewmodelScope 를 사용하지 않는 경우 active 상태일 수 있음
-            job.cancel()
-        }
         super.onDestroyView()
     }
 }

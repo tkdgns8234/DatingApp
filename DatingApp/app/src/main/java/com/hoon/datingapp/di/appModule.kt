@@ -32,9 +32,9 @@ internal val appModule = module {
     viewModel { MainViewModel(get(), get(), get(), get(), get()) }
     viewModel { SignUpViewModel(get()) }
     viewModel { ChatViewModel(get(), get(), get(), get()) }
-    viewModel { ChatListViewModel(get(), get()) }
-    viewModel { LikeViewModel(get()) }
-    viewModel { LikeMeListViewModel(get()) }
+    viewModel { ChatListViewModel(get(), get(), get()) }
+    viewModel { LikeViewModel(get(), get(), get(), get(), get()) }
+    viewModel { LikeMeListViewModel(get(), get()) }
 
     // domain
     single { CheckIsNewProfileUseCase(get()) }
@@ -44,6 +44,11 @@ internal val appModule = module {
     single { SendMessageUseCase(get()) }
     single { TraceChatHistoryUseCase(get()) }
     single { GetMatchedUsersUseCase(get()) }
+    single { TraceUsersLikeMeUseCase(get()) }
+    single { TraceNewUserAndChangedUserUseCase(get()) }
+    single { LikeUserUseCase(get()) }
+    single { DisLikeUserUseCase(get()) }
+    single { MakeChatRoomIfLikeEachOtherUseCase(get()) }
 
     // db
     single { PreferenceManager(androidApplication()) }

@@ -4,6 +4,7 @@ import android.net.Uri
 import com.hoon.datingapp.data.db.FirebaseRealtimeDB
 import com.hoon.datingapp.data.db.FirebaseStorage
 import com.hoon.datingapp.data.model.Message
+import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.util.DatabaseResponse
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -15,7 +16,7 @@ class FirebaseRepositoryImpl(
 ) : FirebaseRepository {
 
     override suspend fun checkIsNewProfile(uid: String): DatabaseResponse = withContext(ioDispatcher) {
-            firebaseDB.checkIsNewProfile(uid)
+        firebaseDB.checkIsNewProfile(uid)
     }
 
     override suspend fun getUserProfile(uid: String): DatabaseResponse = withContext(ioDispatcher) {
@@ -30,7 +31,7 @@ class FirebaseRepositoryImpl(
         storage.uploadPhoto(uid, imageUri)
     }
 
-    override suspend fun sendMessage(chatKey: String, message: String) = withContext(ioDispatcher) {
+    override suspend fun sendMessage(chatKey: String, message: Message) = withContext(ioDispatcher) {
         firebaseDB.sendMessage(chatKey, message)
     }
 
@@ -40,5 +41,29 @@ class FirebaseRepositoryImpl(
 
     override suspend fun getMatchedUsers(uid: String): DatabaseResponse = withContext(ioDispatcher) {
         firebaseDB.getMatchedUsers(uid)
+    }
+
+    override suspend fun traceUsersLikeMe(uid: String, callback: (profile: UserProfile) -> Unit) = withContext(ioDispatcher) {
+        firebaseDB.traceUsersLikeMe(uid, callback)
+    }
+
+    override suspend fun traceNewUserAndChangedUser(
+        uid: String,
+        newUserCallback: (UserProfile) -> Unit,
+        changedUserCallback: (UserProfile) -> Unit
+    ) = withContext(ioDispatcher) {
+        firebaseDB.traceNewUserAndChangedUser(uid, newUserCallback, changedUserCallback)
+    }
+
+    override suspend fun like(currentUserID: String, otherUserID: String) = withContext(ioDispatcher) {
+        firebaseDB.like(currentUserID, otherUserID)
+    }
+
+    override suspend fun disLike(currentUserID: String, otherUserID: String) = withContext(ioDispatcher) {
+        firebaseDB.disLike(currentUserID, otherUserID)
+    }
+
+    override suspend fun makeChatRoomIfLikeEachOther(currentUserID: String, otherUserId: String) = withContext(ioDispatcher) {
+        firebaseDB.makeChatRoomIfLikeEachOther(currentUserID, otherUserId)
     }
 }

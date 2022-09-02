@@ -88,6 +88,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.FirebaseAuth
 import com.hoon.datingapp.R
 import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.ActivityMainBinding
@@ -126,6 +127,7 @@ internal class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>()
             when (it) {
                 is MainState.UnInitialized -> {
                     initViews()
+                    viewModel.fetchData()
                 }
                 is MainState.Loading -> {
                     handleLoadingState()
@@ -173,6 +175,7 @@ internal class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>()
     }
 
     private fun handleLogoutState() {
+        FirebaseAuth.getInstance().signOut()
         toast("로그아웃 되었습니다. 로그인 페이지로 이동합니다.")
         startActivity(LoginActivity.newIntent(this))
     }

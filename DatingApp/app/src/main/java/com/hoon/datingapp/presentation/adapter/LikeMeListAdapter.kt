@@ -8,21 +8,19 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.databinding.ItemLikeMeBinding
+import kotlinx.coroutines.withTimeout
 
 class LikeMeListAdapter : ListAdapter<UserProfile, LikeMeListAdapter.ViewHolder>(diffUtil) {
     inner class ViewHolder(private val binding: ItemLikeMeBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(userProfile: UserProfile) {
+        fun bind(userProfile: UserProfile) = with(binding) {
 
-            with(binding.imageView) {
-                Glide
-                    .with(binding.root)
-                    .load(userProfile.imageURI)
-                    .into(this)
+            Glide
+                .with(binding.root)
+                .load(userProfile.imageURI)
+                .into(imageView)
 
-                this.clipToOutline = true
-            }
-
-            binding.tvName.text = userProfile.userName
+            imageView.clipToOutline = true
+            tvName.text = userProfile.userName
         }
     }
 

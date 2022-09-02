@@ -9,12 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hoon.datingapp.data.model.Message
 import com.hoon.datingapp.databinding.ItemChatBinding
 
-class ChatAdapter(val currentUserID: String) : ListAdapter<Message, ChatAdapter.ViewHolder>(diffutils) {
+class ChatAdapter(val currentUserID: String) :
+    ListAdapter<Message, ChatAdapter.ViewHolder>(diffutils) {
     inner class ViewHolder(val binding: ItemChatBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(message : Message) {
-            binding.message.text = message.message
+        fun bind(_msg: Message) = with(binding) {
+            message.text = _msg.message
 
-            if (message.senderID == currentUserID) {
+            if (_msg.senderID == currentUserID) {
                 binding.root.gravity = Gravity.RIGHT
             } else {
                 binding.root.gravity = Gravity.LEFT

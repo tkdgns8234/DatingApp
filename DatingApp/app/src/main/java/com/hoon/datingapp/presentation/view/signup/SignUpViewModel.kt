@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.hoon.datingapp.data.preference.PreferenceManager
 import com.hoon.datingapp.presentation.view.BaseViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class SignUpViewModel(
@@ -17,10 +16,6 @@ class SignUpViewModel(
     val signUpStateLiveData: LiveData<SignUpState> = _signUpStateLiveData
 
     val auth by lazy { FirebaseAuth.getInstance() }
-
-    override fun fetchData(): Job {
-        return Job()
-    }
 
     fun login(email: String, pw: String) = viewModelScope.launch {
         auth.signInWithEmailAndPassword(email, pw).addOnCompleteListener { task ->
@@ -50,7 +45,7 @@ class SignUpViewModel(
     }
 
     private fun setState(state: SignUpState) {
-        _signUpStateLiveData.postValue(state)
+        _signUpStateLiveData.value = state
     }
 
     companion object {
