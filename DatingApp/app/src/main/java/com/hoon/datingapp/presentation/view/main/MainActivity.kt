@@ -74,6 +74,14 @@ message:
 senderid:
 timestamp:
 
+배운점? 어려웠던점?
+ firebase realtime db 를 사용하면 콜백을 기반으로 데이터를 참조하고 가져옴
+ -> 코루틴을 사용하는 의미가 퇴색되는거같아 get() api 호출해서 task 를 가져오고
+ 코루틴에서 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.3.1' 라이브러리 import 해서
+ task의 await() 함수를 사용해 콜백 없이 await() 함수로 콜백을 기다리는 형태의 코드를 구현
+
+ 기존은
+ realtime db를 위한 callback 호출, 값을 기다리고 return 하기위해 CompletableDeferred 객체 사용
  */
 
 package com.hoon.datingapp.presentation.view.main

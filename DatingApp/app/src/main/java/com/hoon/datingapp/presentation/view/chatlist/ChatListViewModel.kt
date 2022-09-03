@@ -37,7 +37,7 @@ internal class ChatListViewModel(
 
             when (dbResponse) {
                 is DatabaseResponse.Success<*> -> {
-                    val chatList = dbResponse.result as List<ChatRoom>
+                    val chatList = dbResponse.result as? List<ChatRoom> ?: return@launch
                     setState(ChatListState.GetMatchedUsers(chatList))
                 }
                 is DatabaseResponse.Failed -> {

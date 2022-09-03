@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.hoon.datingapp.data.db.DBKey.CHATS_KEY
 import com.hoon.datingapp.data.db.DBKey.DB_NAME
@@ -12,8 +13,10 @@ import com.hoon.datingapp.data.model.ChatRoom
 import com.hoon.datingapp.data.model.Message
 import com.hoon.datingapp.data.model.UserProfile
 import com.hoon.datingapp.util.DatabaseResponse
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.koin.ext.scope
 
@@ -27,41 +30,36 @@ class FirebaseRealtimeDB {
         Firebase.database.reference.child(DB_NAME).child(CHATS_KEY)
     }
 
-    // realtime db를 위한 callback 호출 callback 호출 된 후 함수 return 하기위해 deferred 객체 사용
-    // 데이터베이스를 참조하다가 에러가 난 경우 error 상태를 return 하도록 DatabaseResult class 구현
-    internal suspend fun checkIsNewProfile(uid: String): DatabaseResponse {
-        var retVal = CompletableDeferred<DatabaseResponse>()
-
-        val userDB = usersDB.child(uid)
-        userDB.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val isNewProfile = snapshot.child(DBKey.USER_NAME).value == null
-                retVal.complete(DatabaseResponse.Success(isNewProfile))
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                retVal.complete(DatabaseResponse.Failed)
-            }
-        })
-
-        return retVal.await()
+    internal fun like(currentUserID: String, otherUserID: String) {
+        // 상대방의 userID의 like에 나의 id를 저장
+        usersDB.child(otherUserID)
+            .child(DBKey.LIKED_BY)
+            .child(DBKey.LIKE)
+            .child(currentUserID)
+            .setValue(true)
     }
 
+    internal fun disLike(currentUserID: String, otherUserID: String) {
+        // 상대방의 userID의 like에 나의 id를 저장
+        usersDB.child(otherUserID)
+            .child(DBKey.LIKED_BY)
+            .child(DBKey.DIS_LIKE)
+            .child(currentUserID)
+            .setValue(true)
+    }
+
+    // sealed class 로 success 와 fail 두가지 상태 중 하나를 return
     internal suspend fun getUserProfile(uid: String): DatabaseResponse {
-        var retVal = CompletableDeferred<DatabaseResponse>()
+        val profile: UserProfile?
 
-        usersDB.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val model: UserProfile? = snapshot.getValue(UserProfile::class.java)
-                retVal.complete(DatabaseResponse.Success(model))
-            }
+        return try {
+            profile = usersDB.child(uid).get().await().getValue(UserProfile::class.java)
+            DatabaseResponse.Success(profile)
 
-            override fun onCancelled(error: DatabaseError) {
-                retVal.complete(DatabaseResponse.Failed)
-            }
-        })
-
-        return retVal.await()
+        } catch (e: CancellationException) {
+            Log.e(TAG, Log.getStackTraceString(e))
+            DatabaseResponse.Failed
+        }
     }
 
     internal fun updateUserProfile(uid: String, name: String, imageUri: Uri) {
@@ -69,36 +67,65 @@ class FirebaseRealtimeDB {
         usersDB.child(uid).setValue(userProfile)
     }
 
+    internal suspend fun checkIsNewProfile(uid: String): DatabaseResponse {
+        val userDB = usersDB.child(uid)
+        val isNewProfile: Boolean
+
+        return try {
+            isNewProfile = userDB.get().await().child(DBKey.USER_NAME).value == null
+            DatabaseResponse.Success(isNewProfile)
+
+        } catch (e: CancellationException) {
+            Log.e(TAG, Log.getStackTraceString(e))
+            DatabaseResponse.Failed
+        }
+    }
+
+    internal suspend fun getMatchedUsers(uid: String): DatabaseResponse {
+        val matchedUsers = usersDB.child(uid).child(DBKey.CHAT)
+        val chatList = mutableListOf<ChatRoom>()
+
+        return try {
+            matchedUsers.get().await().children.forEach {
+                val chatRoom = it.getValue(ChatRoom::class.java)
+                chatRoom ?: return@forEach
+
+                chatList.add(chatRoom)
+            }
+            DatabaseResponse.Success(chatList)
+        } catch (e: CancellationException) {
+            Log.e(TAG, Log.getStackTraceString(e))
+            DatabaseResponse.Failed
+        }
+    }
+
     internal fun sendMessage(chatKey: String, message: Message) {
         chatsDB.child(chatKey).push().setValue(message)
     }
 
-    internal suspend fun getMatchedUsers(uid: String): DatabaseResponse {
-        var retVal = CompletableDeferred<DatabaseResponse>()
-        val chatList = mutableListOf<ChatRoom>()
-        val userList = usersDB.child(uid).child(DBKey.CHAT)
+    internal suspend fun makeChatRoomIfLikeEachOther(currentUserID: String, otherUserId: String) {
+        val db =
+            usersDB.child(currentUserID).child(DBKey.LIKED_BY).child(DBKey.LIKE).child(otherUserId)
 
-        userList.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                snapshot.children.forEach {
-                    val chat = it.getValue(ChatRoom::class.java)
-                    chat ?: return
+        val isOtherUserLikeMe = db.get().await().value == true
+        if (isOtherUserLikeMe) {
+            makeChatRoom(otherUserId, currentUserID)
+            makeChatRoom(currentUserID, otherUserId)
+        }
+    }
 
-                    chatList.add(chat)
-                }
-                retVal.complete(DatabaseResponse.Success(chatList))
-            }
+    private fun makeChatRoom(currentUserID: String, otherUserId: String) {
+        var key = ""
+        listOf(currentUserID, otherUserId).sorted().forEach { key += it }
 
-            override fun onCancelled(error: DatabaseError) {
-                retVal.complete(DatabaseResponse.Failed)
-            }
-        })
-
-        return retVal.await()
+        usersDB
+            .child(currentUserID)
+            .child(DBKey.CHAT)
+            .push()
+            .setValue(ChatRoom(currentUserID, otherUserId, key, ""))
     }
 
     internal fun traceChatHistory(chatKey: String, callback: (Message) -> Unit) {
-        Log.e("test", "chatKey=${chatKey}")
         chatsDB.child(chatKey).addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                 val message = snapshot.getValue(Message::class.java)
@@ -133,7 +160,7 @@ class FirebaseRealtimeDB {
         })
     }
 
-    internal fun getUserLikeMe(uid: String, callback: (profile: UserProfile) -> Unit) {
+    private fun getUserLikeMe(uid: String, callback: (profile: UserProfile) -> Unit) {
         usersDB.child(uid).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val model: UserProfile? = snapshot.getValue(UserProfile::class.java)
@@ -181,49 +208,8 @@ class FirebaseRealtimeDB {
         })
     }
 
-    internal fun like(currentUserID: String, otherUserID: String) {
-        // 상대방의 userID의 like에 나의 id를 저장
-        usersDB.child(otherUserID)
-            .child(DBKey.LIKED_BY)
-            .child(DBKey.LIKE)
-            .child(currentUserID)
-            .setValue(true)
-    }
-
-    internal fun disLike(currentUserID: String, otherUserID: String) {
-        // 상대방의 userID의 like에 나의 id를 저장
-        usersDB.child(otherUserID)
-            .child(DBKey.LIKED_BY)
-            .child(DBKey.DIS_LIKE)
-            .child(currentUserID)
-            .setValue(true)
-    }
-
-    internal fun makeChatRoomIfLikeEachOther(currentUserID: String, otherUserId: String) {
-        val db =
-            usersDB.child(currentUserID).child(DBKey.LIKED_BY).child(DBKey.LIKE).child(otherUserId)
-        db.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                // otherUser 가 나를 like 했는지 확인
-                if (snapshot.value == true) {
-                    makeChatRoom(otherUserId, currentUserID)
-                    makeChatRoom(currentUserID, otherUserId)
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-    }
-
-    private fun makeChatRoom(currentUserID: String, otherUserId: String) {
-        var key = ""
-        listOf(currentUserID, otherUserId).sorted().forEach { key += it }
-
-        usersDB
-            .child(currentUserID)
-            .child(DBKey.CHAT)
-            .push()
-            .setValue(ChatRoom(currentUserID, otherUserId, key, ""))
+    companion object {
+        const val TAG = "FirebaseRealtimeDB"
     }
 
 }
