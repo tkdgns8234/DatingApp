@@ -9,8 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hoon.datingapp.data.model.Message
 import com.hoon.datingapp.databinding.ItemChatBinding
 
-class ChatAdapter(val currentUserID: String) :
-    ListAdapter<Message, ChatAdapter.ViewHolder>(diffutils) {
+class ChatAdapter(val currentUserID: String) : ListAdapter<Message, ChatAdapter.ViewHolder>(diffutils) {
     inner class ViewHolder(val binding: ItemChatBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(_msg: Message) = with(binding) {
             message.text = _msg.message

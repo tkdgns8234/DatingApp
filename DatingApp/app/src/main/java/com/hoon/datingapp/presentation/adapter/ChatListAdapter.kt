@@ -9,6 +9,8 @@ import com.bumptech.glide.Glide
 import com.hoon.datingapp.data.model.ChatRoom
 import com.hoon.datingapp.databinding.ItemChatListBinding
 
+
+// onclick 등 콜백함수는 nullable 프로퍼티로 빼서 null 처리하면서 사용하는 방법도 좋을듯 싶다.
 class ChatListAdapter(
     val onClickListener: (partnerID: String, key: String) -> Unit,
     val getUserProfileHandler: (userID: String, completeHandler: (name: String, imageURI: String) -> Unit) -> Unit,
