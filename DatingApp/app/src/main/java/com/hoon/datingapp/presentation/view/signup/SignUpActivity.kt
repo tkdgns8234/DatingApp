@@ -10,7 +10,7 @@ import com.hoon.datingapp.presentation.view.BaseActivity
 import com.hoon.datingapp.presentation.view.main.MainActivity
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class SignUpActivity : BaseActivity<SignUpViewModel, ActivitySignupAndLoginBinding>() {
+internal class SignUpActivity : BaseActivity<SignUpViewModel, ActivitySignupAndLoginBinding>() {
 
     companion object {
         fun newIntent(context: Context) =

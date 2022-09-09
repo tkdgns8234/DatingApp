@@ -2,14 +2,12 @@ package com.hoon.datingapp.presentation.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.google.firebase.auth.FirebaseAuth
 import com.hoon.datingapp.data.preference.PreferenceManager
 import com.hoon.datingapp.databinding.ActivitySplashBinding
 import com.hoon.datingapp.presentation.view.login.LoginActivity
 import com.hoon.datingapp.presentation.view.main.MainActivity
 
 class SplashActivity : AppCompatActivity() {
-    private val auth = FirebaseAuth.getInstance()
 
     private val binding by lazy {
         ActivitySplashBinding.inflate(layoutInflater)
@@ -24,6 +22,7 @@ class SplashActivity : AppCompatActivity() {
         super.onStart()
 
         // 로그인 되어있지 않으면 login activity로 이동
+        // 예외적으로 data 영역 직접 접근
         val pref = PreferenceManager(this)
         val id = pref.getCurrentUserID()
         if (id == null) {

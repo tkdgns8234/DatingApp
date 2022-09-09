@@ -5,6 +5,8 @@ import com.hoon.datingapp.data.db.FirebaseStorage
 import com.hoon.datingapp.data.preference.PreferenceManager
 import com.hoon.datingapp.data.repository.FirebaseRepository
 import com.hoon.datingapp.data.repository.FirebaseRepositoryImpl
+import com.hoon.datingapp.data.repository.PreferenceRepository
+import com.hoon.datingapp.data.repository.PreferenceRepositoryImpl
 import com.hoon.datingapp.domain.*
 import com.hoon.datingapp.domain.CheckIsNewProfileUseCase
 import com.hoon.datingapp.domain.GetUserProfileUseCase
@@ -51,12 +53,11 @@ internal val appModule = module {
     single { MakeChatRoomIfLikeEachOtherUseCase(get()) }
 
     // db
-    single { PreferenceManager(androidApplication()) }
-
     single<FirebaseRepository> { FirebaseRepositoryImpl(get(), get(), get()) }
+    single<PreferenceRepository> {PreferenceRepositoryImpl(get())}
+
+    single { PreferenceManager(androidApplication()) }
     single { FirebaseRealtimeDB() }
     single { FirebaseStorage() }
 
-//    suspend fun updateUserProfile(uid: String, name: String, imageUri: Uri)
-//    suspend fun uploadPhotoUri(uid: String, imageUri: Uri) : Uri)
 }

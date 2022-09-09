@@ -1,13 +1,12 @@
 package com.hoon.datingapp.presentation.view.main
 
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.hoon.datingapp.data.model.UserProfile
-import com.hoon.datingapp.data.preference.PreferenceManager
+import com.hoon.datingapp.data.repository.PreferenceRepositoryImpl
 import com.hoon.datingapp.domain.CheckIsNewProfileUseCase
 import com.hoon.datingapp.domain.GetUserProfileUseCase
 import com.hoon.datingapp.domain.UpdateUserProfileUseCase
@@ -18,7 +17,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 internal class MainViewModel(
-    private val preferenceManager: PreferenceManager,
+    private val preferenceRepositoryImpl: PreferenceRepositoryImpl,
     private val checkIsNewProfileUseCase: CheckIsNewProfileUseCase,
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val uploadPhotoUseCase: UploadPhotoUseCase,
@@ -31,7 +30,7 @@ internal class MainViewModel(
     fun fetchData(): Job = viewModelScope.launch {
         setState(MainState.Loading)
 
-        preferenceManager.getCurrentUserID()?.let {
+        preferenceRepositoryImpl.getCurrentUserID()?.let {
             setState(MainState.Login)
         } ?: kotlin.run {
             setState(MainState.Logout)
@@ -45,7 +44,7 @@ internal class MainViewModel(
 
     fun signOut() {
         FirebaseAuth.getInstance().signOut()
-        preferenceManager.removeCurrentUserID()
+        preferenceRepositoryImpl.removeCurrentUserID()
         setState(MainState.Logout)
     }
 
@@ -99,7 +98,7 @@ internal class MainViewModel(
     }
 
     fun getCurrentUserID(): String? {
-        return preferenceManager.getCurrentUserID()
+        return preferenceRepositoryImpl.getCurrentUserID()
     }
 
     private fun setState(state: MainState) {

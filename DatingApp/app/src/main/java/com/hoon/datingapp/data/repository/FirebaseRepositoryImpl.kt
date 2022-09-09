@@ -27,10 +27,6 @@ class FirebaseRepositoryImpl(
         firebaseDB.updateUserProfile(uid, name, imageUri)
     }
 
-    override suspend fun uploadPhotoUri(uid: String, imageUri: Uri): Uri = withContext(ioDispatcher) {
-        storage.uploadPhoto(uid, imageUri)
-    }
-
     override suspend fun sendMessage(chatKey: String, message: Message) = withContext(ioDispatcher) {
         firebaseDB.sendMessage(chatKey, message)
     }
@@ -65,5 +61,9 @@ class FirebaseRepositoryImpl(
 
     override suspend fun makeChatRoomIfLikeEachOther(currentUserID: String, otherUserId: String) = withContext(ioDispatcher) {
         firebaseDB.makeChatRoomIfLikeEachOther(currentUserID, otherUserId)
+    }
+
+    override suspend fun uploadPhotoUri(uid: String, imageUri: Uri): Uri = withContext(ioDispatcher) {
+        storage.uploadPhoto(uid, imageUri)
     }
 }

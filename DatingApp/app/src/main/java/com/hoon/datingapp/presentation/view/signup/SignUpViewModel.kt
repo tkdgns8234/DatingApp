@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.hoon.datingapp.data.preference.PreferenceManager
+import com.hoon.datingapp.data.repository.PreferenceRepositoryImpl
 import com.hoon.datingapp.presentation.view.BaseViewModel
 import kotlinx.coroutines.launch
 
-class SignUpViewModel(
-    private val preferenceManager: PreferenceManager
+internal class SignUpViewModel(
+    private val preferenceRepositoryImpl: PreferenceRepositoryImpl
 ) : BaseViewModel() {
 
     private val _signUpStateLiveData = MutableLiveData<SignUpState>(SignUpState.Uninitialized)
@@ -40,7 +40,7 @@ class SignUpViewModel(
     fun putCurrentUserID() = viewModelScope.launch {
         val uid = auth.uid
         uid?.let {
-            preferenceManager.putCurrentUserID(uid)
+            preferenceRepositoryImpl.putCurrentUserID(uid)
         }
     }
 

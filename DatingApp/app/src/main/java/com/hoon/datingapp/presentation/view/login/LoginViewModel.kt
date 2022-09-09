@@ -2,14 +2,11 @@ package com.hoon.datingapp.presentation.view.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import com.hoon.datingapp.data.preference.PreferenceManager
+import com.hoon.datingapp.data.repository.PreferenceRepositoryImpl
 import com.hoon.datingapp.presentation.view.BaseViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 internal class LoginViewModel(
-    private val preferenceManager: PreferenceManager
+    private val preferenceRepositoryImpl: PreferenceRepositoryImpl
 ) : BaseViewModel() {
 
     private var _loginStatusLiveData = MutableLiveData<LoginState>(LoginState.Uninitialized)
@@ -17,7 +14,7 @@ internal class LoginViewModel(
 
     fun putCurrentUserID(userID: String?) {
         userID?.let {
-            preferenceManager.putCurrentUserID(userID)
+            preferenceRepositoryImpl.putCurrentUserID(userID)
             setState(LoginState.Success)
         } ?: kotlin.run {
             setState(LoginState.Error)

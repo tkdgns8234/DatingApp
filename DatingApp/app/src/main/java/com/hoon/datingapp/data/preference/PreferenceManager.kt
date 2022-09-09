@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 class PreferenceManager(
     private val context: Context
 ) {
-
     companion object {
         const val PREFERENCE_NAME = "com-hoon-datingapp-pref"
         const val KEY_ID_CURRENT_USER = "UID"
@@ -19,7 +18,6 @@ class PreferenceManager(
     private val pref by lazy { getSharedPreference() }
 
     private val editor by lazy { pref.edit() }
-
 
     /*
      *  firebase의 user id 저장

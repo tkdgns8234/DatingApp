@@ -3,15 +3,14 @@ package com.hoon.datingapp.presentation.view.likemelist
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.hoon.datingapp.data.preference.PreferenceManager
+import com.hoon.datingapp.data.repository.PreferenceRepositoryImpl
 import com.hoon.datingapp.domain.TraceUsersLikeMeUseCase
 import com.hoon.datingapp.presentation.view.BaseViewModel
-import com.hoon.datingapp.presentation.view.main.MainState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 internal class LikeMeListViewModel(
-    private val preferenceManager: PreferenceManager,
+    private val preferenceRepositoryImpl: PreferenceRepositoryImpl,
     val traceUsersLikeMeUseCase: TraceUsersLikeMeUseCase
 ) : BaseViewModel() {
 
@@ -24,7 +23,7 @@ internal class LikeMeListViewModel(
     }
 
     fun getCurrentUserID(): String? {
-        return preferenceManager.getCurrentUserID()
+        return preferenceRepositoryImpl.getCurrentUserID()
     }
 
     fun traceUsersLikeMe() = viewModelScope.launch {

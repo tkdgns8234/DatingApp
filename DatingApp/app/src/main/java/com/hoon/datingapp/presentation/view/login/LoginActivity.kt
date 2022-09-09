@@ -15,9 +15,6 @@ import com.hoon.datingapp.extensions.toast
 import com.hoon.datingapp.presentation.view.BaseActivity
 import com.hoon.datingapp.presentation.view.main.MainActivity
 import com.hoon.datingapp.presentation.view.signup.SignUpActivity
-import com.hoon.datingapp.util.Constants
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import org.koin.android.viewmodel.ext.android.viewModel
 
 internal class LoginActivity : BaseActivity<LoginViewModel, ActivityLoginBinding>() {

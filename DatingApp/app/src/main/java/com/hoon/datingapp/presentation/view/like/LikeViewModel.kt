@@ -3,7 +3,7 @@ package com.hoon.datingapp.presentation.view.like
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.hoon.datingapp.data.preference.PreferenceManager
+import com.hoon.datingapp.data.repository.PreferenceRepositoryImpl
 import com.hoon.datingapp.domain.DisLikeUserUseCase
 import com.hoon.datingapp.domain.LikeUserUseCase
 import com.hoon.datingapp.domain.MakeChatRoomIfLikeEachOtherUseCase
@@ -12,7 +12,7 @@ import com.hoon.datingapp.presentation.view.BaseViewModel
 import kotlinx.coroutines.launch
 
 internal class LikeViewModel(
-    private val preferenceManager: PreferenceManager,
+    private val preferenceRepositoryImpl: PreferenceRepositoryImpl,
     private val traceNewUserAndChangedUserUseCase: TraceNewUserAndChangedUserUseCase,
     private val likeUserUseCase: LikeUserUseCase,
     private val disLikeUserUseCase: DisLikeUserUseCase,
@@ -65,7 +65,7 @@ internal class LikeViewModel(
     }
 
     fun getCurrentUserID(): String? {
-        return preferenceManager.getCurrentUserID()
+        return preferenceRepositoryImpl.getCurrentUserID()
     }
 
     private fun setState(state: LikeState) {
