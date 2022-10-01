@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.hoon.datingapp.data.model.ChatRoom
 import com.hoon.datingapp.data.model.UserProfile
-import com.hoon.datingapp.data.repository.PreferenceRepositoryImpl
+import com.hoon.datingapp.data.preference.PreferenceManager
 import com.hoon.datingapp.domain.GetMatchedUsersUseCase
 import com.hoon.datingapp.domain.GetUserProfileUseCase
 import com.hoon.datingapp.presentation.view.BaseViewModel
@@ -14,7 +14,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 internal class ChatListViewModel(
-    private val preferenceRepositoryImpl: PreferenceRepositoryImpl,
+    private val preferenceManager: PreferenceManager,
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val getMatchedUsersUseCase: GetMatchedUsersUseCase
 ) : BaseViewModel() {
@@ -63,7 +63,7 @@ internal class ChatListViewModel(
         }
 
     fun getCurrentUserID(): String? {
-        return preferenceRepositoryImpl.getCurrentUserID()
+        return preferenceManager.getCurrentUserID()
     }
 
     private fun setState(state: ChatListState) {

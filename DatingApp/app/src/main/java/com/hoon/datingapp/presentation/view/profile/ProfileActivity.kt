@@ -73,7 +73,7 @@ class ProfileActivity : AppCompatActivity() {
             setResult(RESULT_OK, intent)
             finish()
         } else {
-            toast("이미지와 이름을 모두 입력해주세요")
+            toast("프로필 사진과 이름을 모두 입력해주세요")
         }
     }
 
