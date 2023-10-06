@@ -38,8 +38,6 @@
 - MVVM 및 Clean Architecture 학습하고 적용해보기
     - **[클린 아키텍처에대해 배운 점](https://tkdgns8234.tistory.com/196)**
     - **[아키텍처 패턴에 대해](https://tkdgns8234.tistory.com/190)**
-- Repository 패턴으로 데이터 로직을 추상화 및 재사용 가능하도록 구현
-- Activity, ViewMdoel의 BaseClass 를 만들어 반복되는 코드의 양을 줄이고 일관성을 위해 앱의 전반적인 구현 틀을 만들어 개발 진행
 - Firebase Auth 사용하기
     - email login
     - facebook login
